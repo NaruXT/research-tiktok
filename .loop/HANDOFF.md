@@ -50,13 +50,19 @@ Con esto, **4/4 módulos confirmados hasta ahora están Done con evidencia E2E r
 
 **Share Kit - documentación completa, categoría de bloqueo nueva otra vez.** No es una API HTTP, es un SDK nativo iOS/Android - no hay forma de probarlo E2E desde esta sesión (requeriría construir una app móvil real). `tested_e2e: false` permanente, documentado explícitamente como fuera de alcance por naturaleza (no por falta de aprobación ni de infraestructura desplegable).
 
-**Commercial Content API - documentación completa, misma familia que Research API.** Mismo modelo de client access token, scope `research.adlib.basic` confirmado, datos limitados actualmente a anuncios de la UE. `tested_e2e: false` permanente, mismo tipo de bloqueo (aprobación externa).
+**Commercial Content API - documentación completa, misma familia que Research API.** Mismo modelo de client access token, scope `research.adlib.basic` confirmado, datos limitados actualmente a anuncios de la UE. `tested_e2e: false` permanente, mismo tipo de bloqueo (aprobación externa). **Grader dio ROJO** (estado "desaprobado" de ads inventado sin fuente, cita de "limitado a UE" sin URL declarada) - corregido en el mismo ciclo (commit `794b150`).
 
-Quedan: Legacy API v2, Embed Videos.
+**Legacy API v2 - resuelto sin Skill nueva.** Los endpoints "v2" de la guía de migración (`tiktok-api-v2-get-user-info`/`-video-list`/`-video-query`) son exactamente los mismos ya documentados en `tiktok-display-api` - no hay nada nuevo que documentar. La v1 (legacy real, etiquetada "Legacy Products" en la nav de TikTok) está siendo reemplazada por esos mismos endpoints.
+
+**Embed Videos - completo, único módulo 100% sin prerrequisitos.** Endpoint público (`www.tiktok.com/oembed`), sin auth, sin app, sin scope. Probado en vivo dos veces (caso éxito con metadata real, caso error con URL inválida -> HTTP 400). `tested_e2e: true`, evidencia inline en el propio SKILL.md (no hace falta archivo separado, no hay secrets involucrados).
+
+**Con esto, los 12 módulos del brief original (10 numerados + 2 sin confirmar) quedaron resueltos**: 6 con evidencia E2E real, 3 documentados al 100% pero bloqueados por aprobación externa de TikTok (permanente), 1 documentado como SDK nativo fuera de alcance de pruebas por terminal, 1 resuelto como no-aplicable (redundante), y 2 (Business API, TikTok Shop) siguen sin confirmar si aplican a este repo - ver PROGRESS.md § Notes y § Next.
+
+**Patrón que se repitió en 2 de 2 ciclos de este batch de módulos "sin app propia" (client credentials/aprobación externa)**: el Grader encontró un dato inventado o mal citado en ambos (Research API: scope faltante + callout sobre-específico; Commercial Content API: estado inventado + cita sin fuente declarada). Ambos corregidos en el mismo ciclo que se detectaron. Para futuros módulos de esta familia (si se agregan más adelante), prestar atención extra a no completar campos "por completitud" sin re-fetchear la fuente exacta.
 
 ## Bloqueadas
 - `tested_e2e` de `tiktok-research-api`, `tiktok-data-portability-api`, `tiktok-commercial-content-api`: requieren aprobación externa de TikTok, fuera del control de esta sesión.
-- `tested_e2e` de `tiktok-share-kit`: requiere una app móvil nativa real, fuera del alcance de este proyecto. Ver PROGRESS.md § Blocked para las cuatro.
+- `tested_e2e` de `tiktok-share-kit`: requiere una app móvil nativa real, fuera del alcance de este proyecto. Ver PROGRESS.md § Blocked para el detalle de las cuatro.
 
 ## Protocolo Maker/Grader
 1. Maker: implementa el próximo ítem de `PROGRESS.md` → Next, corre `.loop/verify.sh`.
