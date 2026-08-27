@@ -5,14 +5,17 @@ tiktok_docs:
   - https://developers.tiktok.com/docs/en/research-api-get-started
   - https://developers.tiktok.com/docs/en/client-access-token-management
   - https://developers.tiktok.com/docs/en/research-api-specs-query-videos
-scopes: []
+  - https://developers.tiktok.com/docs/en/research-api-specs-query-user-info
+  - https://developers.tiktok.com/docs/en/research-api-specs-query-video-comments
+scopes:
+  - research.data.basic
 tested_e2e: false
 last_verified: 2026-08-28
 ---
 
 ## ⚠️ Prerrequisito de acceso distinto a todos los módulos anteriores
 
-Research API **no se habilita agregando un producto/scope a una app normal de Sandbox** - requiere una aplicación separada como "investigador vetted" (`/application/research-api`), sujeta a aprobación de TikTok, típicamente atada a afiliación académica/institucional. Sin esa aprobación no existe un `client_key`/`client_secret` de Research API para probar nada de este módulo. Esto es estructuralmente distinto a los checkpoints anteriores (un click de portal, o desplegar un servidor) - es un proceso de aprobación externo con criterios de elegibilidad, no algo que se resuelva en la misma sesión.
+Research API **no se habilita agregando un producto/scope a una app normal de Sandbox** - requiere un proyecto de investigación aprobado por TikTok (`research-api-get-started`: "Once your application is approved, a research client will be generated for your project"). Sin esa aprobación no existe un `client_key`/`client_secret` de Research API para probar nada de este módulo. **Nota de precisión**: la doc oficial fetcheada confirma que hace falta aplicar y ser aprobado, pero no detalla criterios de elegibilidad específicos (afiliación académica, etc.) - cualquier expectativa sobre esos criterios debería verificarse en `/application/research-api` directamente, no asumirse de esta Skill.
 
 ## Overview
 
@@ -20,7 +23,7 @@ Permite consultar datos públicos de TikTok (no requiere autorización de un usu
 
 ## Scopes requeridos
 
-Ninguno documentado como scope de OAuth de usuario - el acceso se controla por la aprobación del proyecto de investigación en sí, no por scopes que un usuario autoriza.
+**`research.data.basic`** - confirmado como requerido (fila "Scopes" de la tabla de headers) en los 3 endpoints de datos (`video/query`, `user/info`, `video/comment/list`). No es un scope que un usuario final autorice vía OAuth como en Login Kit - viene otorgado al proyecto de investigación aprobado.
 
 ## Endpoints
 
@@ -56,17 +59,17 @@ Content-Type: application/json
 
 ### 3. Consultar comentarios de un video
 ```
-POST https://open.tiktokapis.com/v2/research/video/comment/list/?fields=id,text
+POST https://open.tiktokapis.com/v2/research/video/comment/list/?fields=id,text,video_id,parent_comment_id,like_count,reply_count,create_time
 Authorization: Bearer {CLIENT_ACCESS_TOKEN}
 ```
-Pide `video_id` **o** `comment_id` (no ambos a la vez) - `video_id` trae los comentarios de ese video, `comment_id` trae las respuestas a ese comentario puntual.
+Pide `video_id` **o** `comment_id` (no ambos a la vez) - `video_id` trae los comentarios de ese video, `comment_id` trae las respuestas a ese comentario puntual. Response incluye `comments[]` (con los campos pedidos en `fields` + `display_name`) y paginación `cursor`/`has_more`.
 
 ### 4. Consultar info de cuenta pública
 ```
-POST https://open.tiktokapis.com/v2/research/user/info/?fields=...
+POST https://open.tiktokapis.com/v2/research/user/info/?fields=display_name,bio_description,avatar_url,is_verified,follower_count,following_count,likes_count,video_count,bio_url
 Authorization: Bearer {CLIENT_ACCESS_TOKEN}
 ```
-Consulta por `username`, no requiere que el usuario haya autorizado nada (es data pública).
+Consulta por `username` (en el body), no requiere que el usuario haya autorizado nada (es data pública).
 
 ## Schemas (JSON)
 
