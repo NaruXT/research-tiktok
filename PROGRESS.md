@@ -41,11 +41,14 @@ Confirmados por fetch directo a developers.tiktok.com (no inferidos):
 ## In progress
 - Ninguna
 
+## In progress
+- Iteración 1 - Módulo 1 (Login Kit / OAuth): `skills/tiktok-auth-setup/SKILL.md` creado y completo (endpoints, scopes, schemas, manejo de errores, ejemplo end-to-end). `verify.sh` en verde. Grader (Ciclo 1 de entrenamiento, subagente separado) verificó en frío contra las 4 fuentes oficiales re-fetcheadas independientemente: VERDE. Pendiente para marcar Done: `tested_e2e: true` con evidencia real - ver Blocked.
+
 ## Next
-- [ ] Iteración 1 - Módulo 1 (Login Kit / OAuth / App Setup / Scopes): crear `skills/tiktok-auth-setup/SKILL.md` completo, con app real registrada y prueba E2E de OAuth ejecutada
+- Ninguna todavía (Módulo 1 sigue in progress hasta resolver el bloqueo de abajo)
 
 ## Blocked
-- Ninguna
+- **Prueba E2E de `tiktok-auth-setup`**: requiere que el usuario registre una TikTok Developer App real (login humano, verificación de cuenta, aceptación de términos en developers.tiktok.com) - el loop no puede completar este paso de forma autónoma. No es un ROJO por intentos fallidos, es un prerrequisito externo real, documentado en la sección "Prueba E2E realizada" del propio SKILL.md.
 
 ## Notes
 - Los módulos 11 y 12 (Business API, TikTok Shop) están marcados "sin confirmar" a propósito: la inspección inicial de `/docs/en/welcome` y `/doc/overview` no los mostró como parte de developers.tiktok.com. Antes de tratarlos como iteraciones de este mismo repo, hay que confirmar si viven bajo el mismo dominio/OAuth o si son portales de partner completamente distintos con su propio flujo de auth.

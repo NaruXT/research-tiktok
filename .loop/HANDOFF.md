@@ -26,10 +26,14 @@ Iteración 1 está hecha cuando existe `skills/tiktok-auth-setup/SKILL.md` que:
 Commit de referencia: ver `.loop/baseline-commit.txt`
 
 ## Estado
-Fase de inicialización completa: `.loop/`, `.loop/verify.sh` (probado en verde y en rojo), `.loop/skill-template.md`, `PROGRESS.md` creados. Documentación base de developers.tiktok.com inspeccionada (módulos reales confirmados por fetch directo, no inventados - ver PROGRESS.md § Módulos descubiertos). Todavía no se ejecutó el modo entrenamiento (Paso 7 de la skill `setup-loop-engineering`) ni se creó ninguna Skill. Próximo paso: correr 2-3 ciclos Maker/Grader supervisados sobre el primer ítem de Iteración 1 antes de ofrecer lanzar `/loop` desatendido.
+Modo entrenamiento (Paso 7) - Ciclo 1 completo. Maker creó `skills/tiktok-auth-setup/SKILL.md` (endpoints OAuth, scopes, schemas, manejo de errores, ejemplo end-to-end - todo verificado contra 4 fuentes oficiales re-fetcheadas). `verify.sh` en verde. Grader (subagente separado, sin contexto previo) dio VERDE tras re-fetchear las fuentes por su cuenta y confirmar: sin secrets filtrados, sin paths prohibidos tocados, 1 archivo/163 líneas (dentro de guardarraíles numéricos), sin rastro de `privacy_level` público.
+
+**Hallazgo de calibración del Ciclo 1 (esto es justamente lo que el modo entrenamiento existe para encontrar):** el Objetivo de Iteración 1 tal como está escrito arriba exige `tested_e2e: true` para considerarse "hecho", pero eso requiere que un humano registre la TikTok Developer App real (login, verificación de cuenta, aceptación de términos) - un paso que ningún loop desatendido puede completar por sí solo. Esto no es específico de Auth: probablemente aplica a todo módulo que necesite `tested_e2e: true`. Antes de lanzar `/loop` desatendido hay que decidir con el usuario cómo se maneja este checkpoint humano (¿pausa el loop y espera?, ¿la parte autónoma se limita a documentación + `tested_e2e: false` con motivo, y el usuario corre la prueba E2E aparte en una sesión supervisada?).
+
+Todavía no se marcó Done el módulo 1 (correcto: falta la E2E real). Próximo paso: Ciclo 2 de entrenamiento - decidir con el usuario cómo resolver el checkpoint humano antes de seguir.
 
 ## Bloqueadas
-Ninguna todavía.
+- `tested_e2e` de `tiktok-auth-setup`: prerrequisito externo real (registro de app humano), no un ROJO por intentos - ver PROGRESS.md § Blocked.
 
 ## Protocolo Maker/Grader
 1. Maker: implementa el próximo ítem de `PROGRESS.md` → Next, corre `.loop/verify.sh`.
