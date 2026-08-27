@@ -7,7 +7,8 @@ Iteración 1 está hecha cuando existe `skills/tiktok-auth-setup/SKILL.md` que:
 (c) `PROGRESS.md` (raíz) marca el módulo Auth/OAuth como Done.
 
 ## Guardarraíles numéricos
-- Máximo por iteración: 4 archivos / 700 líneas (cada iteración = 1 módulo completo, más grande que un commit típico de código)
+- Máximo por iteración (trabajo de documentación/código de la Skill en sí - `skills/**`, `SKILL.md`, evidencia): 4 archivos / 700 líneas
+- **Excepción recalibrada tras el Ciclo 2** (hallazgo del Grader): setup de infraestructura externa de una sola vez (ej. páginas estáticas para verificación de dominio en `docs/**`, creación del repo remoto) NO cuenta contra el límite de arriba, siempre que quede documentado en HANDOFF.md § Estado con la causa concreta (qué bloqueo externo lo forzó) - no es una licencia abierta, es para este tipo específico de bloqueo de un prerrequisito externo, y solo aplica una vez por prerrequisito resuelto (no se repite para el mismo bloqueo).
 - Máximo de intentos por ítem: 6
 - Pausa obligatoria cada 1 iteración (dado que hay pocos módulos y cada uno es grande, se revisa antes de pasar al siguiente)
 - 3 ROJOS consecutivos en el mismo ítem -> BLOQUEADO, anotar causa en PROGRESS.md y seguir con el siguiente ítem
