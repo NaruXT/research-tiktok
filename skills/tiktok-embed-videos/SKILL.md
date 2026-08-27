@@ -31,7 +31,7 @@ Response real (probado en vivo, ver Prueba E2E realizada):
 {
   "version": "1.0",
   "type": "video",
-  "title": "Scramble up ur name & I'll try to guess it #foryoupage #petsoftiktok #aesthetic",
+  "title": "Scramble up ur name & I’ll try to guess it😍❤️ #foryoupage #petsoftiktok #aesthetic",
   "author_url": "https://www.tiktok.com/@scout2015",
   "author_name": "Scout, Suki & Stella",
   "author_unique_id": "scout2015",
