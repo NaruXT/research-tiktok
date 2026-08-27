@@ -19,7 +19,7 @@ Iteración 1 está hecha cuando existe `skills/tiktok-auth-setup/SKILL.md` que:
 - **Registro de app real (Iteración 1)**: crear la TikTok Developer App es una acción con efectos en una cuenta real de terceros (TikTok) - se hace una vez, de forma explícita y visible, no repetida automáticamente por reintentos del loop.
 
 ## Paths
-- Permitidos: `skills/**`, `.loop/**`, `PROGRESS.md`, `.env.example`, `.gitignore`
+- Permitidos: `skills/**`, `.loop/**`, `PROGRESS.md`, `.env.example`, `.gitignore`, `docs/**` (páginas estáticas de ToS/Privacy/Home requeridas por el formulario de registro de la TikTok Developer App, publicadas vía GitHub Pages)
 - Prohibidos: ver `.loop/forbidden-paths.txt` - cualquier match ahí es ROJO automático, no es juicio del Grader
 
 ## Baseline
