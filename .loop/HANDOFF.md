@@ -46,10 +46,10 @@ Con Iteración 3, quedan 3/3 módulos planeados originalmente por el usuario (Au
 
 Con esto, **4/4 módulos confirmados hasta ahora están Done con evidencia E2E real** (Auth, Display, Content Posting, Webhooks). Usuario pidió seguir con los módulos adicionales.
 
-**Research API - documentación completa, nuevo tipo de bloqueo.** A diferencia de todo lo anterior, este módulo usa client credentials (no OAuth de usuario) y requiere que TikTok apruebe al usuario como "investigador vetted" - un proceso externo de aplicación con criterios de elegibilidad (afiliación académica/institucional), no algo resoluble en la sesión ni con un click. Documentado completo (token de client credentials, query de videos/comentarios/cuentas, schemas reales) con `tested_e2e: false` y el motivo explícito - no se inició ningún proceso de aplicación en nombre del usuario.
+**Research API y Data Portability API - documentación completa, mismo tipo de bloqueo nuevo.** Ambos requieren que TikTok apruebe al usuario (investigador vetted para Research API; review de compliance GDPR para Data Portability) - procesos externos de aplicación, no resolubles en la sesión ni con un click de portal. Documentados completos (endpoints, scopes, schemas, manejo de errores reales) con `tested_e2e: false` permanente hasta que exista esa aprobación - no se inició ningún proceso de aplicación en nombre del usuario, es su decisión.
 
 ## Bloqueadas
-- `tested_e2e` de `tiktok-research-api`: requiere aprobación externa de TikTok (proyecto de investigación vetted), fuera del control de esta sesión. Ver PROGRESS.md § Blocked.
+- `tested_e2e` de `tiktok-research-api` y `tiktok-data-portability-api`: requieren aprobación externa de TikTok, fuera del control de esta sesión. Ver PROGRESS.md § Blocked.
 
 ## Protocolo Maker/Grader
 1. Maker: implementa el próximo ítem de `PROGRESS.md` → Next, corre `.loop/verify.sh`.
