@@ -12,7 +12,7 @@ Todo módulo se considera Done solo cuando cumple TODO esto (checklist reusado e
 - [ ] Al menos un schema JSON de request y uno de response, reales, que parsean sin error
 - [ ] Manejo de errores documentado con códigos reales de TikTok (no inventados)
 - [ ] `skills/tiktok-<modulo>/SKILL.md` creado siguiendo `.loop/skill-template.md`
-- [ ] Al menos 1 prueba E2E real ejecutada contra la API (sandbox/privado cuando aplique), evidencia en `.loop/evidence/` con secrets `<REDACTED>`
+- [ ] Al menos 1 prueba E2E real ejecutada contra la API (sandbox/privado cuando aplique), evidencia en `.loop/evidence/` con secrets `<REDACTED>` - **excepto** cuando el único bloqueo restante es una aprobación externa de TikTok fuera del control de este proyecto (ej. proyecto de investigación vetted, review de compliance), documentada explícitamente en § Blocked. En ese caso el módulo puede marcarse Done con `tested_e2e: false` permanente, siempre que el resto del checklist esté 100% cumplido - no es una licencia para saltear E2E por comodidad, solo para bloqueos genuinamente fuera de alcance (hallazgo del Grader, ciclo Data Portability API).
 - [ ] `.loop/verify.sh` pasa en verde para este módulo
 - [ ] Este archivo actualizado (Done/Next) antes de pasar al siguiente módulo
 
