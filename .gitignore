@@ -5,3 +5,6 @@ node_modules/
 .loop/logs/
 .loop/evidence/*.raw.json
 .loop/evidence/*.raw
+.loop/evidence/*.mp4
+.loop/evidence/upload-publish-id.txt
+.loop/evidence/*-put-response.raw.txt

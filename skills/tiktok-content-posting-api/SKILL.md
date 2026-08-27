@@ -9,8 +9,8 @@ tiktok_docs:
 scopes:
   - video.publish
   - video.upload
-tested_e2e: false
-last_verified: 2026-08-27
+tested_e2e: true
+last_verified: 2026-08-28
 ---
 
 ## Overview
@@ -143,7 +143,7 @@ Response de `status/fetch`:
 | 403 | `spam_risk_too_many_posts` | Tope diario de posts alcanzado |
 | 403 | `spam_risk_user_banned_from_posting` | Usuario baneado de publicar |
 | 403 | `reached_active_user_cap` | Cuota diaria de usuarios activos alcanzada |
-| 403 | `unaudited_client_can_only_post_to_private_accounts` | App sin auditar - confirma el guardarraíl de arriba del lado del servidor |
+| 403 | `unaudited_client_can_only_post_to_private_accounts` | App sin auditar - **confirmado en prueba E2E real que esto ocurre incluso con `privacy_level: "SELF_ONLY"`** en Direct Post, con una cuenta de TikTok configurada como pública. La doc oficial sugiere que basta con un `privacy_level` privado, pero en la práctica parece depender de la configuración de privacidad de la propia cuenta del creador (pública vs. privada), no solo del `privacy_level` del post - no confirmado el mecanismo exacto sin cambiar la privacidad de la cuenta de prueba. Upload API (borrador) SÍ funciona sin este problema. Ver `.loop/evidence/tiktok-content-posting-api-e2e.md`. |
 | 403 | `url_ownership_unverified` | `PULL_FROM_URL` sin verificar dominio de la URL |
 | 403 | `privacy_level_option_mismatch` | El `privacy_level` pedido no está en `privacy_level_options` de ese creador |
 | 429 | `rate_limit_exceeded` | 6 requests/minuto en `init`, 20/minuto en `creator_info/query` |
@@ -189,9 +189,12 @@ curl -s -X POST 'https://open.tiktokapis.com/v2/post/publish/status/fetch/' \
 
 ## Prueba E2E realizada
 
-**`tested_e2e: false` - dos prerrequisitos pendientes, no un fallo silencioso.**
+**`tested_e2e: true` - 2026-08-28.**
 
-1. **Scopes**: la app de Sandbox actual (reusada de `tiktok-auth-setup`/`tiktok-display-api`) todavía no tiene `video.publish` ni `video.upload` agregados ni autorizados - hace falta el mismo paso manual de "Add scopes" + re-autorización que en Iteración 2, esta vez con ambos scopes nuevos.
-2. **Archivo de video real**: ninguno de los ciclos anteriores generó o tuvo acceso a un archivo `.mp4` de prueba - hace falta uno (puede ser cualquier clip corto, no importa el contenido, va a quedar en `SELF_ONLY`/borrador).
+Se agregó el producto "Content Posting API" a la app (habilitando Upload por default y Direct Post manualmente), se agregaron los scopes `video.publish`/`video.upload`, se re-autorizó, y se generó un video sintético de prueba con `ffmpeg` (sin contenido real, solo para probar el flujo técnico).
 
-Ninguno de los dos es un ROJO por intentos fallidos - son prerrequisitos externos reales, iguales en naturaleza a los de Iteración 1. Una vez resueltos, ejecutar el "Ejemplo end-to-end" de arriba (empezando por Upload/borrador, que es menos irreversible que Direct Post, antes de probar Direct Post con `SELF_ONLY`) y guardar evidencia en `.loop/evidence/tiktok-content-posting-api-e2e.md`.
+1. **`creator_info/query`**: confirmó `SELF_ONLY` disponible en `privacy_level_options` antes de intentar publicar nada.
+2. **Upload API (borrador)**: flujo completo exitoso - `init` -> subida del archivo (`PUT`, HTTP 201) -> `status/fetch` en polling hasta `SEND_TO_USER_INBOX`. El video quedó como borrador real en el inbox de TikTok de la cuenta de prueba.
+3. **Direct Post con `privacy_level: "SELF_ONLY"`**: falló con `unaudited_client_can_only_post_to_private_accounts` - **hallazgo real no anticipado por la doc**, ver "Manejo de errores" arriba. No es un fallo del guardarraíl del proyecto (que exige `SELF_ONLY` de todas formas) - es una restricción de TikTok más estricta de lo documentado, que ni con `SELF_ONLY` deja publicar por Direct Post desde una app sin auditar hacia una cuenta configurada como pública.
+
+Evidencia completa (requests/responses reales, secrets/PII `<REDACTED>`) en `.loop/evidence/tiktok-content-posting-api-e2e.md`. No se intentó cambiar la configuración de privacidad de la cuenta de prueba para forzar el éxito de Direct Post - queda documentado como limitación real, no simulada.
