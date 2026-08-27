@@ -50,11 +50,13 @@ Con esto, **4/4 módulos confirmados hasta ahora están Done con evidencia E2E r
 
 **Share Kit - documentación completa, categoría de bloqueo nueva otra vez.** No es una API HTTP, es un SDK nativo iOS/Android - no hay forma de probarlo E2E desde esta sesión (requeriría construir una app móvil real). `tested_e2e: false` permanente, documentado explícitamente como fuera de alcance por naturaleza (no por falta de aprobación ni de infraestructura desplegable).
 
-Quedan: Commercial Content API, Legacy API v2, Embed Videos.
+**Commercial Content API - documentación completa, misma familia que Research API.** Mismo modelo de client access token, scope `research.adlib.basic` confirmado, datos limitados actualmente a anuncios de la UE. `tested_e2e: false` permanente, mismo tipo de bloqueo (aprobación externa).
+
+Quedan: Legacy API v2, Embed Videos.
 
 ## Bloqueadas
-- `tested_e2e` de `tiktok-research-api` y `tiktok-data-portability-api`: requieren aprobación externa de TikTok, fuera del control de esta sesión.
-- `tested_e2e` de `tiktok-share-kit`: requiere una app móvil nativa real, fuera del alcance de este proyecto. Ver PROGRESS.md § Blocked para las tres.
+- `tested_e2e` de `tiktok-research-api`, `tiktok-data-portability-api`, `tiktok-commercial-content-api`: requieren aprobación externa de TikTok, fuera del control de esta sesión.
+- `tested_e2e` de `tiktok-share-kit`: requiere una app móvil nativa real, fuera del alcance de este proyecto. Ver PROGRESS.md § Blocked para las cuatro.
 
 ## Protocolo Maker/Grader
 1. Maker: implementa el próximo ítem de `PROGRESS.md` → Next, corre `.loop/verify.sh`.

@@ -44,17 +44,19 @@ Confirmados por fetch directo a developers.tiktok.com (no inferidos):
 - [x] Módulo adicional - Research API: `skills/tiktok-research-api/SKILL.md` completo (client credentials, query videos/comentarios/cuenta, scope `research.data.basic` confirmado), `verify.sh` verde. Documentación 100% completa; `tested_e2e: false` de forma permanente salvo que se apruebe un proyecto de investigación - ver Blocked. Corregido tras ROJO del Grader (scope faltante, fuente de un endpoint sin citar, callout sobre-específico) - ver commit `ddf6d86`.
 - [x] Módulo adicional - Data Portability API: `skills/tiktok-data-portability-api/SKILL.md` completo (add/check/schemas de exportación de datos), `verify.sh` verde, Grader: VERDE. Documentación 100% completa; `tested_e2e: false` de forma permanente salvo aprobación de TikTok - ver Blocked.
 - [x] Módulo adicional - Share Kit: `skills/tiktok-share-kit/SKILL.md` completo, `verify.sh` verde. **Categoría distinta**: es un SDK nativo iOS/Android, no una API HTTP - `tested_e2e: false` permanente, no por un bloqueo de aprobación sino porque probarlo requeriría construir una app móvil real, fuera del alcance de este proyecto (terminal/backend). Ver Blocked.
+- [x] Módulo adicional - Commercial Content API: `skills/tiktok-commercial-content-api/SKILL.md` completo (misma familia de acceso que Research API, scope `research.adlib.basic` confirmado, datos limitados a UE), `verify.sh` verde. `tested_e2e: false` de forma permanente salvo aprobación de TikTok - ver Blocked.
 
 ## In progress
 - Ninguna
 
 ## Next
-- [ ] Módulos adicionales restantes (Commercial Content API, Legacy API v2, Embed Videos) - ver tabla de Módulos descubiertos arriba para fuentes confirmadas.
+- [ ] Módulos adicionales restantes (Legacy API v2, Embed Videos) - ver tabla de Módulos descubiertos arriba para fuentes confirmadas.
 
 ## Blocked
 - **Prueba E2E de `tiktok-research-api`**: requiere que TikTok apruebe una aplicación de proyecto de investigación (`/application/research-api`) - la doc oficial confirma "aplicación aprobada" pero no detalla criterios de elegibilidad exactos, no verificados más allá de eso. No iniciado en nombre del usuario. Documentación completa, solo falta la prueba E2E si en algún momento se aprueba un proyecto.
 - **Prueba E2E de `tiktok-data-portability-api`**: requiere aprobación de TikTok específica para este producto (evaluación de cumplimiento de protección de datos), distinta de la aprobación de Login Kit ya obtenida. No iniciado en nombre del usuario. Documentación completa.
 - **Prueba E2E de `tiktok-share-kit`**: no es un bloqueo de aprobación - requiere construir una app móvil nativa (iOS/Android) real con el SDK integrado, corriendo en simulador/dispositivo, categoría de trabajo fuera del alcance de este proyecto basado en terminal/backend. Documentación completa a nivel de API/SDK.
+- **Prueba E2E de `tiktok-commercial-content-api`**: misma categoría que Research API - requiere aprobación de TikTok como proyecto de investigación. No iniciado en nombre del usuario. Documentación completa.
 
 ## Notes
 - Los módulos 11 y 12 (Business API, TikTok Shop) están marcados "sin confirmar" a propósito: la inspección inicial de `/docs/en/welcome` y `/doc/overview` no los mostró como parte de developers.tiktok.com. Antes de tratarlos como iteraciones de este mismo repo, hay que confirmar si viven bajo el mismo dominio/OAuth o si son portales de partner completamente distintos con su propio flujo de auth. Esto se reforzó al confirmar Webhooks: la búsqueda mostró que tanto TikTok Business API (business-api.tiktok.com) como TikTok Shop (partner.tiktokshop.com) tienen sus propios webhooks en portales separados - consistente con la sospecha original de que son productos con auth/portal propio, no parte de este mismo flujo.
