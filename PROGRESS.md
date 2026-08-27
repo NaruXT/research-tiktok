@@ -37,18 +37,16 @@ Confirmados por fetch directo a developers.tiktok.com (no inferidos):
 
 ## Done
 - [x] Setup inicial del framework de loop engineering (`.loop/`, `verify.sh`, `skill-template.md`, hooks de compactación)
+- [x] Iteración 1 - Módulo 1 (Login Kit / OAuth / App Setup / Scopes): `skills/tiktok-auth-setup/SKILL.md` completo, `verify.sh` verde, Grader (Ciclo 1) verificó en frío: VERDE, `tested_e2e: true` con evidencia real en `.loop/evidence/tiktok-auth-setup-e2e.md` (app Sandbox real, autorización + intercambio + refresh de token ejecutados contra la API real de TikTok, 2026-08-27)
 
 ## In progress
 - Ninguna
 
-## In progress
-- Iteración 1 - Módulo 1 (Login Kit / OAuth): `skills/tiktok-auth-setup/SKILL.md` creado y completo (endpoints, scopes, schemas, manejo de errores, ejemplo end-to-end). `verify.sh` en verde. Grader (Ciclo 1 de entrenamiento, subagente separado) verificó en frío contra las 4 fuentes oficiales re-fetcheadas independientemente: VERDE. Pendiente para marcar Done: `tested_e2e: true` con evidencia real - ver Blocked.
-
 ## Next
-- Ninguna todavía (Módulo 1 sigue in progress hasta resolver el bloqueo de abajo)
+- [ ] Iteración 2 - Display API (Consultas de perfil, lectura de videos): fuente confirmada `/docs/en/display-api-get-started`
 
 ## Blocked
-- **Prueba E2E de `tiktok-auth-setup`**: requiere que el usuario registre una TikTok Developer App real (login humano, verificación de cuenta, aceptación de términos en developers.tiktok.com) - el loop no puede completar este paso de forma autónoma. No es un ROJO por intentos fallidos, es un prerrequisito externo real, documentado en la sección "Prueba E2E realizada" del propio SKILL.md.
+- Ninguna
 
 ## Notes
 - Los módulos 11 y 12 (Business API, TikTok Shop) están marcados "sin confirmar" a propósito: la inspección inicial de `/docs/en/welcome` y `/doc/overview` no los mostró como parte de developers.tiktok.com. Antes de tratarlos como iteraciones de este mismo repo, hay que confirmar si viven bajo el mismo dominio/OAuth o si son portales de partner completamente distintos con su propio flujo de auth.

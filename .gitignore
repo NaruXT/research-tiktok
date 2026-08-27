@@ -1,5 +1,7 @@
 .env
 .env.local
+.DS_Store
 node_modules/
 .loop/logs/
+.loop/evidence/*.raw.json
 .loop/evidence/*.raw

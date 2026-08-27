@@ -13,8 +13,8 @@ scopes:
   - video.list
   - video.upload
   - video.publish
-tested_e2e: false
-last_verified: 2026-08-26
+tested_e2e: true
+last_verified: 2026-08-27
 ---
 
 ## Overview
@@ -119,6 +119,7 @@ Response de error (cualquiera de los tres endpoints):
 - Los tokens pueden refrescarse sin consentimiento repetido del usuario mientras el `refresh_token` siga vigente.
 - En el callback de autorización, `error`/`error_description` en la query string indica que el usuario no completó o no es elegible para la autorización - no confundir con el error JSON del endpoint de token (llegan por canales distintos: query string vs. body).
 - Un `redirect_uri` que no coincide exactamente con el registrado en el Developer Portal produce `invalid_request` en el intercambio de código - causa común de fallos en desarrollo.
+- **Confirmado en prueba E2E real**: este mismatch también falla antes, en el paso de autorización (`/v2/auth/authorize/`) - TikTok muestra una pantalla de error genérica ("No se pudo iniciar sesión con TikTok... redirect_uri", con un código de referencia) en vez de redirigir. El match tiene que ser carácter por carácter contra el valor guardado en el Developer Portal (una barra `/` de más al final, o un path distinto como `/` vs `/callback.html`, ya lo dispara). Ver evidencia en `.loop/evidence/tiktok-auth-setup-e2e.md`.
 
 ## Ejemplo end-to-end
 
@@ -152,12 +153,16 @@ curl -s --location --request POST 'https://open.tiktokapis.com/v2/oauth/token/' 
 
 ## Prueba E2E realizada
 
-**`tested_e2e: false` - prerrequisito faltante, no un fallo silencioso.**
+**`tested_e2e: true` - 2026-08-27.**
 
-No se ejecutó todavía contra la API real porque el registro de la TikTok Developer App (paso 1 de "Endpoints" arriba) requiere una acción humana - login en developers.tiktok.com, verificación de cuenta, y aceptación de términos - que el loop no puede completar de forma autónoma. Esto está documentado como guardarraíl de irreversibilidad en `.loop/HANDOFF.md`: el registro de la app real es una acción explícita del usuario, no repetida automáticamente por reintentos.
+Flujo OAuth 2.0 completo ejecutado contra la API real de TikTok, con una TikTok Developer App real en modo Sandbox (Login Kit, scope `user.info.basic`, Target User = cuenta de desarrollador del usuario):
 
-**Para completar esta sección:**
-1. El usuario registra la app en modo Sandbox (developers.tiktok.com -> Manage apps -> Connect an app) y coloca `TIKTOK_CLIENT_KEY`/`TIKTOK_CLIENT_SECRET`/`TIKTOK_REDIRECT_URI` en `.env`.
-2. Se ejecuta el flujo de "Ejemplo end-to-end" de arriba contra la app real, en modo Sandbox, con la propia cuenta del usuario.
-3. Se guarda evidencia del intercambio y refresh reales (request/response con `access_token`/`refresh_token`/`client_secret` reemplazados por `<REDACTED>`) en `.loop/evidence/tiktok-auth-setup-e2e.md`.
-4. Se actualiza `tested_e2e: true` en el frontmatter de este archivo.
+1. **Autorización** (`/v2/auth/authorize/`): usuario autorizó vía navegador, redirect a una página de callback estática (`https://naruxt.github.io/research-tiktok/callback.html`, publicada en GitHub Pages) que muestra el `code`/`state` recibidos.
+2. **Intercambio de código por token** (`POST /v2/oauth/token/`, `grant_type=authorization_code`): éxito, response con el schema exacto documentado arriba.
+3. **Refresh de token** (`POST /v2/oauth/token/`, `grant_type=refresh_token`): éxito, nuevo `access_token`/`refresh_token` emitidos.
+
+Evidencia completa (requests/responses reales, secrets `<REDACTED>`) en `.loop/evidence/tiktok-auth-setup-e2e.md`. Los tokens reales quedan en `.env` local (gitignored) para reuso en Iteración 2 sin repetir el login.
+
+Registrar la app requirió resolver dos bloqueos no anticipados en la doc inicial - ambos documentados para que no se repitan:
+- El formulario de registro exige URLs reales y **verificadas** de Terms of Service / Privacy Policy / Web URL (verificación por archivo de firma con nombre único por app, patrón `tiktok<TOKEN>.txt`, alojado en el prefijo de la URL).
+- El `redirect_uri` debe coincidir carácter por carácter con el registrado en el portal (ver "Manejo de errores" arriba) - un primer intento falló por esto.
