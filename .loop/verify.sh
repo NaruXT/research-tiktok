@@ -101,7 +101,7 @@ PYEOF
   # 5. Guardarraíl de irreversibilidad: Content Posting nunca con privacy_level público como parámetro
   MODULE_DIR=$(dirname "$skill")
   if [ -d "$MODULE_DIR" ]; then
-    if grep -rEl 'privacy_level\s*=\s*["\x27]?(PUBLIC_TO_EVERYONE|PUBLIC)' "$MODULE_DIR" 2>/dev/null | grep -q .; then
+    if grep -rEl '"?privacy_level"?[[:space:]]*[:=][[:space:]]*["\x27]?(PUBLIC_TO_EVERYONE|PUBLIC)' "$MODULE_DIR" 2>/dev/null | grep -q .; then
       fail_check "$MODULE_DIR: script/código referencia privacy_level público - viola el guardarraíl de irreversibilidad de Content Posting API"
     fi
   fi

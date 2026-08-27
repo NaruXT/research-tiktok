@@ -154,8 +154,8 @@ Para `status/fetch`: `invalid_publish_id`, `token_not_authorized_for_specified_p
 ## Ejemplo end-to-end
 
 ```bash
-# GUARDARRAÍL: privacy_level SIEMPRE "SELF_ONLY" - no aceptar otro valor por parámetro/env var.
-PRIVACY_LEVEL="SELF_ONLY"
+# GUARDARRAÍL: "privacy_level": "SELF_ONLY" va literal en el JSON de abajo,
+# nunca por variable/parámetro/env var - así ningún override externo puede cambiarlo.
 
 # 0. Consultar qué privacy_level_options tiene realmente habilitadas el creador
 curl -s -X POST 'https://open.tiktokapis.com/v2/post/publish/creator_info/query/' \
@@ -168,7 +168,7 @@ INIT_RESPONSE=$(curl -s -X POST 'https://open.tiktokapis.com/v2/post/publish/vid
   -H "Authorization: Bearer ${ACCESS_TOKEN}" \
   -H 'Content-Type: application/json; charset=UTF-8' \
   --data-raw "{
-    \"post_info\": {\"title\": \"prueba E2E - Sandbox\", \"privacy_level\": \"${PRIVACY_LEVEL}\", \"disable_comment\": true},
+    \"post_info\": {\"title\": \"prueba E2E - Sandbox\", \"privacy_level\": \"SELF_ONLY\", \"disable_comment\": true},
     \"source_info\": {\"source\": \"FILE_UPLOAD\", \"video_size\": ${VIDEO_SIZE}, \"chunk_size\": ${VIDEO_SIZE}, \"total_chunk_count\": 1}
   }")
 PUBLISH_ID=$(echo "$INIT_RESPONSE" | python3 -c "import json,sys; print(json.load(sys.stdin)['data']['publish_id'])")
