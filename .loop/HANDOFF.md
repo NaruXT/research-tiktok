@@ -44,10 +44,12 @@ Con Iteración 3, quedan 3/3 módulos planeados originalmente por el usuario (Au
 
 **Iteración 4 (Webhooks) completa.** Se confirmó que el módulo SÍ existe bajo developers.tiktok.com (páginas propias `webhooks-overview`/`webhooks-events`/`webhooks-verification`, no visibles en la navegación inicial pero reales). Grader dio VERDE con un hallazgo menor (header documentado como `Tiktok-Signature` en vez de `TikTok-Signature` - corregido). Usuario eligió desplegar un túnel `ngrok` temporal para la prueba E2E: el botón "Test event" del portal falló con 403 de permisos (confirmado con logs de ngrok que nunca llegó al servidor), pero un evento **real** (`authorization.removed`, generado revocando el acceso de la app desde la cuenta de TikTok del usuario) sí se entregó y verificó correctamente (firma HMAC-SHA256 válida). Infraestructura de prueba (Flask + ngrok) dada de baja al terminar. `tested_e2e: true`.
 
-Con esto, **4/4 módulos confirmados hasta ahora están Done con evidencia E2E real** (Auth, Display, Content Posting, Webhooks). Quedan los módulos adicionales de `PROGRESS.md` (Research API, Data Portability, Share Kit, Commercial Content API, Legacy API v2, Embed Videos) y los dos sin confirmar (Business API, TikTok Shop - probablemente portales separados, ver Notes).
+Con esto, **4/4 módulos confirmados hasta ahora están Done con evidencia E2E real** (Auth, Display, Content Posting, Webhooks). Usuario pidió seguir con los módulos adicionales.
+
+**Research API - documentación completa, nuevo tipo de bloqueo.** A diferencia de todo lo anterior, este módulo usa client credentials (no OAuth de usuario) y requiere que TikTok apruebe al usuario como "investigador vetted" - un proceso externo de aplicación con criterios de elegibilidad (afiliación académica/institucional), no algo resoluble en la sesión ni con un click. Documentado completo (token de client credentials, query de videos/comentarios/cuentas, schemas reales) con `tested_e2e: false` y el motivo explícito - no se inició ningún proceso de aplicación en nombre del usuario.
 
 ## Bloqueadas
-Ninguna.
+- `tested_e2e` de `tiktok-research-api`: requiere aprobación externa de TikTok (proyecto de investigación vetted), fuera del control de esta sesión. Ver PROGRESS.md § Blocked.
 
 ## Protocolo Maker/Grader
 1. Maker: implementa el próximo ítem de `PROGRESS.md` → Next, corre `.loop/verify.sh`.

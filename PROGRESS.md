@@ -43,13 +43,13 @@ Confirmados por fetch directo a developers.tiktok.com (no inferidos):
 - [x] Iteración 4 - Webhooks: existencia confirmada bajo developers.tiktok.com, `skills/tiktok-webhooks/SKILL.md` completo, `verify.sh` verde, `tested_e2e: true` con evidencia real en `.loop/evidence/tiktok-webhooks-e2e.md` (servidor Flask + túnel ngrok temporal, evento real `authorization.removed` recibido con firma HMAC-SHA256 verificada correctamente, infraestructura de prueba dada de baja al terminar, 2026-08-28). Hallazgo: el botón "Test event" del portal falla con 403 de permisos (no llega a nuestro servidor) - un evento real sí se entrega sin problema.
 
 ## In progress
-- Ninguna
+- Módulo adicional - Research API: `skills/tiktok-research-api/SKILL.md` completo (client credentials flow, query videos/comments/user info), `verify.sh` verde. `tested_e2e: false` - ver Blocked, requiere aprobación de TikTok como "investigador vetted" (proceso externo, no un click de portal).
 
 ## Next
-- [ ] Módulos adicionales (Research API, Data Portability API, Share Kit, Commercial Content API, Legacy API v2, Embed Videos) - ver tabla de Módulos descubiertos arriba para fuentes confirmadas.
+- [ ] Módulos adicionales restantes (Data Portability API, Share Kit, Commercial Content API, Legacy API v2, Embed Videos) - ver tabla de Módulos descubiertos arriba para fuentes confirmadas.
 
 ## Blocked
-- Ninguna
+- **Prueba E2E de `tiktok-research-api`**: requiere aprobación de TikTok como proyecto de investigación vetted (`/application/research-api`) - proceso externo con criterios de elegibilidad (afiliación académica/institucional), no iniciado en nombre del usuario. Documentación completa, solo falta la prueba E2E si en algún momento se aprueba un proyecto.
 
 ## Notes
 - Los módulos 11 y 12 (Business API, TikTok Shop) están marcados "sin confirmar" a propósito: la inspección inicial de `/docs/en/welcome` y `/doc/overview` no los mostró como parte de developers.tiktok.com. Antes de tratarlos como iteraciones de este mismo repo, hay que confirmar si viven bajo el mismo dominio/OAuth o si son portales de partner completamente distintos con su propio flujo de auth. Esto se reforzó al confirmar Webhooks: la búsqueda mostró que tanto TikTok Business API (business-api.tiktok.com) como TikTok Shop (partner.tiktokshop.com) tienen sus propios webhooks en portales separados - consistente con la sospecha original de que son productos con auth/portal propio, no parte de este mismo flujo.
