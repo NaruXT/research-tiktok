@@ -56,13 +56,16 @@ Con esto, **4/4 módulos confirmados hasta ahora están Done con evidencia E2E r
 
 **Embed Videos - completo, único módulo 100% sin prerrequisitos.** Endpoint público (`www.tiktok.com/oembed`), sin auth, sin app, sin scope. Probado en vivo dos veces (caso éxito con metadata real, caso error con URL inválida -> HTTP 400). `tested_e2e: true`, evidencia inline en el propio SKILL.md (no hace falta archivo separado, no hay secrets involucrados).
 
-**Con esto, los 12 módulos del brief original (10 numerados + 2 sin confirmar) quedaron resueltos**: 6 con evidencia E2E real, 3 documentados al 100% pero bloqueados por aprobación externa de TikTok (permanente), 1 documentado como SDK nativo fuera de alcance de pruebas por terminal, 1 resuelto como no-aplicable (redundante), y 2 (Business API, TikTok Shop) siguen sin confirmar si aplican a este repo - ver PROGRESS.md § Notes y § Next.
+**Patrón que se repitió en 2 de 2 ciclos del batch de módulos "sin app propia" (client credentials/aprobación externa)**: el Grader encontró un dato inventado o mal citado en ambos (Research API: scope faltante + callout sobre-específico; Commercial Content API: estado inventado + cita sin fuente declarada). Ambos corregidos en el mismo ciclo que se detectaron. Share Kit tuvo un ROJO de otro tipo (afirmación de equivalencia iOS/Android falsa), también corregido en el ciclo. Los 3 Graders de re-verificación + el de Embed Videos volvieron VERDE.
 
-**Patrón que se repitió en 2 de 2 ciclos de este batch de módulos "sin app propia" (client credentials/aprobación externa)**: el Grader encontró un dato inventado o mal citado en ambos (Research API: scope faltante + callout sobre-específico; Commercial Content API: estado inventado + cita sin fuente declarada). Ambos corregidos en el mismo ciclo que se detectaron. Para futuros módulos de esta familia (si se agregan más adelante), prestar atención extra a no completar campos "por completitud" sin re-fetchear la fuente exacta.
+**Business API y TikTok Shop - investigados y confirmados fuera de alcance (2026-08-28).** Ambos son portales de developer completamente separados con su propio registro de app y flujo de auth (`business-api.tiktok.com/portal` con OAuth de advertiser; `partner.tiktokshop.com` con `app_key`/`app_secret` y `auth.tiktok-shops.com` propios) - ninguno comparte infraestructura con este repo. Usuario decidió dejarlos como puntero documentado en PROGRESS.md, sin Skills nuevas - se tratarían como un proyecto separado si se piden en el futuro.
+
+## PROYECTO COMPLETO
+
+Los 12 módulos del brief original están resueltos: 6 con evidencia E2E real (Auth, Display, Content Posting, Webhooks, Embed Videos, + Legacy v2 vía Display API), 4 documentados al 100% pero bloqueados por aprobación externa de TikTok de forma permanente (Research API, Data Portability, Commercial Content), 1 documentado como SDK nativo fuera de alcance de pruebas por terminal (Share Kit), y Business API/TikTok Shop confirmados fuera de alcance. Todo el historial de commits, hallazgos del Grader (incluyendo los ROJO corregidos), y evidencia real queda en `github.com/NaruXT/research-tiktok`.
 
 ## Bloqueadas
-- `tested_e2e` de `tiktok-research-api`, `tiktok-data-portability-api`, `tiktok-commercial-content-api`: requieren aprobación externa de TikTok, fuera del control de esta sesión.
-- `tested_e2e` de `tiktok-share-kit`: requiere una app móvil nativa real, fuera del alcance de este proyecto. Ver PROGRESS.md § Blocked para el detalle de las cuatro.
+Ninguna activa - los bloqueos restantes (`tested_e2e: false` de Research API, Data Portability, Commercial Content, Share Kit) son permanentes por diseño, no algo a resolver en una próxima sesión salvo que cambien las circunstancias externas (aprobación de TikTok, o decisión de construir una app móvil).
 
 ## Protocolo Maker/Grader
 1. Maker: implementa el próximo ítem de `PROGRESS.md` → Next, corre `.loop/verify.sh`.
