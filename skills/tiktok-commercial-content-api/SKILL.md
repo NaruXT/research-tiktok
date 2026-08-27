@@ -5,6 +5,7 @@ tiktok_docs:
   - https://developers.tiktok.com/docs/en/commercial-content-api-getting-started
   - https://developers.tiktok.com/docs/en/commercial-content-api-query-ads
   - https://developers.tiktok.com/docs/en/client-access-token-management
+  - https://developers.tiktok.com/products/commercial-content-api
 scopes:
   - research.adlib.basic
 tested_e2e: false
@@ -13,11 +14,11 @@ last_verified: 2026-08-28
 
 ## ⚠️ Prerrequisito de acceso: misma familia que Research API
 
-Commercial Content API usa el mismo modelo de acceso que Research API (mismo dominio `research.tiktok.com`, mismo flujo de client access token): requiere un proyecto de investigación aprobado por TikTok - la doc confirma "Once your application is approved, a research client will be generated for your project", sin detallar criterios de elegibilidad exactos. **Dato adicional de esta doc**: actualmente los datos disponibles están limitados a **anuncios de países de la UE**, aunque el solicitante puede estar ubicado en cualquier país.
+Commercial Content API usa el mismo modelo de acceso que Research API (mismo dominio `research.tiktok.com`, mismo flujo de client access token): requiere un proyecto de investigación aprobado por TikTok - la doc confirma "Once your application is approved, a research client will be generated for your project", sin detallar criterios de elegibilidad exactos. **Dato confirmado en `products/commercial-content-api`** (agregado a `tiktok_docs`): "in this phase we are ONLY including data from EU countries, while a researcher/professional who is requesting it can be located in any country" - actualmente los datos disponibles están limitados a **anuncios de países de la UE**, aunque el solicitante puede estar ubicado en cualquier país.
 
 ## Overview
 
-Permite buscar avisos pagos/contenido comercial de TikTok por anunciante o palabra clave: fechas de publicación, info de targeting, alcance (`reach`), estado del aviso (activo/inactivo/desaprobado), y datos del anunciante. Es de solo lectura sobre datos públicos - no requiere autorización de un usuario final.
+Permite buscar avisos pagos/contenido comercial de TikTok por anunciante o palabra clave: fechas de publicación, info de targeting, alcance (`reach`), estado del aviso (`active`/`inactive` - solo estos dos valores confirmados en la doc, ningún tercer estado documentado), y datos del anunciante. Es de solo lectura sobre datos públicos - no requiere autorización de un usuario final.
 
 ## Scopes requeridos
 
