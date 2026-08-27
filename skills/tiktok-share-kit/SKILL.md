@@ -4,6 +4,7 @@ description: Compartir contenido (video/foto) desde una app móvil nativa (iOS/A
 tiktok_docs:
   - https://developers.tiktok.com/docs/en/share-kit-ios-quickstart-v2
   - https://developers.tiktok.com/docs/en/share-kit-android-quickstart-v2
+  - https://developers.tiktok.com/products/share-kit
 scopes: []
 tested_e2e: false
 last_verified: 2026-08-28
@@ -60,11 +61,31 @@ No hay JSON sobre HTTP - esto es la forma (illustrativa, como estructura de obje
 
 ## Manejo de errores
 
-Dos niveles de código de error documentados (iOS, confirmado equivalente en Android):
+**Corrección importante**: iOS y Android tienen esquemas de error **distintos**, no equivalentes - un ciclo anterior de esta Skill afirmó equivalencia sin verificarlo contra la doc de Android; corregido acá con ambas tablas reales, cada una re-fetcheada de su propia fuente.
 
-**Nivel alto** (`errorCode` del `TikTokShareResponse`): `0` éxito, `-1` error genérico (ej. red), `-2` usuario canceló en TikTok, `-3` falló la publicación, `-4` compartir denegado, `-5` no soportado.
+### iOS (`TikTokShareResponse`: `errorCode` + `errorMessage` + `shareState`)
+
+**Nivel alto** (`errorCode`): `0` éxito, `-1` error genérico (ej. red), `-2` usuario canceló en TikTok, `-3` falló la publicación, `-4` compartir denegado, `-5` no soportado.
 
 **Nivel detallado** (`shareState`): `20000` éxito, `20001` error no clasificado, `20002` error de parseo de params, `20003` permiso no otorgado, `20004` usuario no logueado (en TikTok), `20005` sin permiso de álbum de TikTok, `20006` error de red, `20007` duración de video fuera de rango, `20008` foto no cumple requisitos, `20009` falló el chequeo de timestamp, `20010` falló procesamiento de recurso de foto, `20011` resolución de video fuera de rango, `20012` formato de video no soportado, `20013` compartir cancelado, `20014` ya hay otro video subiendo, `20015` usuario guardó como borrador, `20016` falló al publicar, `21001` falló descarga de iCloud, `21002` error interno de parseo, `21003` el recurso de media no existe.
+
+### Android (`ShareResponse`: `isSuccess` + `errorCode` + `subErrorCode` + `errorMsg` - estructura distinta a iOS)
+
+| `errorCode` | `subErrorCode` | Significado |
+|---|---|---|
+| 0 | 0 | Success |
+| -1 | -1 | Unknown error / Share Denied (la doc lista ambos significados bajo el mismo par de códigos) |
+| -2 | -2 | Sharing canceled |
+| -3 | 20002 | Parameters parsing error |
+| -3 | 10011 | App certificate does not match configurations |
+| -4 | 20005 | TikTok has no album permissions |
+| -4 | 20016 | Contenido guardado como borrador / cuenta no habilitada para postear |
+| -5 | 20008 | Photo doesn't meet requirements |
+| -5 | 20010 | Processing photo resources failed |
+| -5 | 20012 | Video format is not supported |
+| -12 | 20006 | TikTok Network error (código exclusivo de Android, no existe en iOS) |
+
+`10011` (certificado de la app no coincide con lo configurado en el portal) también es exclusivo de Android - no tiene equivalente documentado en la tabla de iOS.
 
 ## Ejemplo end-to-end
 
