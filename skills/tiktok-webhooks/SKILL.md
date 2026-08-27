@@ -29,7 +29,7 @@ En el Developer Portal, al crear la app o editándola después de tener el `clie
 ```
 POST {tu callback URL}
 Content-Type: application/json
-Tiktok-Signature: t={timestamp},s={firma_hmac_sha256_hex}
+TikTok-Signature: t={timestamp},s={firma_hmac_sha256_hex}
 
 {payload del evento, ver Schemas}
 ```
@@ -84,7 +84,7 @@ Formato común a todos los eventos: `client_key`, `event`, `create_time` (unix t
 
 ## Manejo de errores
 
-- **Verificación de firma** (fuertemente recomendada por la doc, no aplicarla deja el endpoint abierto a spoofing/replay): el header `Tiktok-Signature` viene como `t={timestamp},s={firma}`. La firma se calcula como `HMAC-SHA256(client_secret, "{timestamp}.{body_json_crudo}")` - el `signed_payload` es el timestamp concatenado con `.` y el body crudo tal cual llegó (no un JSON re-serializado, tiene que ser el string exacto recibido, antes de parsear). Comparar el hex resultante contra `s` con comparación de tiempo constante (no `==` directo, para evitar timing attacks - no especificado por la doc pero es práctica estándar de HMAC).
+- **Verificación de firma** (fuertemente recomendada por la doc, no aplicarla deja el endpoint abierto a spoofing/replay): el header `TikTok-Signature` viene como `t={timestamp},s={firma}`. La firma se calcula como `HMAC-SHA256(client_secret, "{timestamp}.{body_json_crudo}")` - el `signed_payload` es el timestamp concatenado con `.` y el body crudo tal cual llegó (no un JSON re-serializado, tiene que ser el string exacto recibido, antes de parsear). Comparar el hex resultante contra `s` con comparación de tiempo constante (no `==` directo, para evitar timing attacks - no especificado por la doc pero es práctica estándar de HMAC).
 - Si el timestamp `t` es muy viejo, es señal de replay attack - la doc dice "determinar si la diferencia de tiempo es tolerable" sin dar un valor concreto; usar un margen razonable (ej. 5 minutos) y rechazar fuera de eso.
 - Responder 200 rápido, siempre - si el procesamiento del evento falla después de responder 200, hay que loguearlo y reintentar por cuenta propia (TikTok no lo reintentará, ya recibió el 200).
 - Si el servidor no responde a tiempo o responde con error, TikTok reintenta con backoff exponencial hasta por **72 horas**, después descarta el evento. Entrega "al menos una vez" - el mismo evento puede llegar duplicado, el procesamiento debe ser idempotente (ej. dedupe por `event`+`create_time`+contenido, o por un ID si el evento lo trae).
@@ -113,7 +113,7 @@ def verify_signature(raw_body: bytes, signature_header: str) -> bool:
 
 @app.route("/tiktok/webhook", methods=["POST"])
 def tiktok_webhook():
-    signature = request.headers.get("Tiktok-Signature", "")
+    signature = request.headers.get("TikTok-Signature", "")
     if not verify_signature(request.get_data(), signature):
         abort(401)
 
