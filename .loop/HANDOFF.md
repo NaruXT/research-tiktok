@@ -39,7 +39,9 @@ Commit de referencia: ver `.loop/baseline-commit.txt`
 
 Con Iteración 2, el modo entrenamiento (Paso 7) ya corrió 3 ciclos completos: Ciclo 1 (documentación + Grader VERDE), Ciclo 2 (primer E2E real, con sorpresas resueltas y guardarraíl recalibrado), Ciclo 3 (segundo E2E real, sin sorpresas nuevas más allá de un detalle de comportamiento de API). Esto cumple el criterio de la skill `setup-loop-engineering` de "2-3 iteraciones sin sorpresas" antes de pasar al Paso 8 (elegir mecanismo de lanzamiento).
 
-Próximo paso: Grader del Ciclo 3, y después decidir con el usuario el mecanismo de lanzamiento para Iteración 3+ (Content Posting API en adelante).
+Grader del Ciclo 3: VERDE (subagente separado, confirmó cero secrets y cero PII en texto plano en todo el historial de git, incluyendo el `display_name` real del usuario). **Modo entrenamiento (Paso 7) completo, 3/3 ciclos verificados.**
+
+Próximo paso: decidir con el usuario el mecanismo de lanzamiento (Paso 8) para Iteración 3 en adelante (Content Posting API, Webhooks, y los módulos adicionales por confirmar).
 
 ## Bloqueadas
 Ninguna.
