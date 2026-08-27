@@ -38,12 +38,13 @@ Confirmados por fetch directo a developers.tiktok.com (no inferidos):
 ## Done
 - [x] Setup inicial del framework de loop engineering (`.loop/`, `verify.sh`, `skill-template.md`, hooks de compactación)
 - [x] Iteración 1 - Módulo 1 (Login Kit / OAuth / App Setup / Scopes): `skills/tiktok-auth-setup/SKILL.md` completo, `verify.sh` verde, Grader (Ciclo 1) verificó en frío: VERDE, `tested_e2e: true` con evidencia real en `.loop/evidence/tiktok-auth-setup-e2e.md` (app Sandbox real, autorización + intercambio + refresh de token ejecutados contra la API real de TikTok, 2026-08-27)
+- [x] Iteración 2 - Display API (perfil, lista y consulta de videos): `skills/tiktok-display-api/SKILL.md` completo, `verify.sh` verde, `tested_e2e: true` con evidencia real en `.loop/evidence/tiktok-display-api-e2e.md` (mismo app Sandbox + scope `video.list` agregado, los 3 endpoints probados contra la API real, 2026-08-27). Cobertura pendiente: caso "video real encontrado" en video/list y video/query (la cuenta de prueba no tiene contenido público) - documentado, no simulado.
 
 ## In progress
 - Ninguna
 
 ## Next
-- [ ] Iteración 2 - Display API (Consultas de perfil, lectura de videos): fuente confirmada `/docs/en/display-api-get-started`
+- [ ] Iteración 3 - Content Posting API (Direct Post, Upload/borradores) - fuente confirmada `/products/content-posting-api`. **Atención guardarraíl**: cualquier prueba E2E de este módulo debe usar `privacy_level=SELF_ONLY` (o equivalente privado/borrador), nunca público - ver `.loop/HANDOFF.md` § Guardarraíles de irreversibilidad.
 
 ## Blocked
 - Ninguna

@@ -35,9 +35,11 @@ Commit de referencia: ver `.loop/baseline-commit.txt`
 3. **Bloqueo no anticipado #2**: el modo Production de la app pide un video de demo del flujo funcionando - dependencia circular (no podés grabar el flujo antes de tenerlo funcionando). Se resolvió usando **Sandbox mode**, que documentalmente no requiere review. Cualquier módulo futuro debe registrarse/probarse en Sandbox, nunca iniciar en Production.
 4. **Bloqueo no anticipado #3**: el primer intento de autorización falló por mismatch exacto de `redirect_uri` entre lo registrado en el portal y lo enviado en la URL - TikTok exige match carácter por carácter, y el error aparece en la propia pantalla de autorización (no solo en el intercambio de token). Ya documentado en el SKILL.md para que no se repita.
 
-Con esto, el patrón para futuros módulos (Iteración 2+) que reusen esta misma app/Sandbox ya no debería requerir repetir los bloqueos #1 y #2 (la app y el sitio de verificación ya existen) - solo agregar scopes/productos nuevos a la misma app cuando haga falta.
+**Iteración 2 (Display API) completa - Ciclo 3 de entrenamiento, y esta vez confirmó la hipótesis del hallazgo #1-2 de arriba:** agregar el scope `video.list` a la app existente y re-autorizar tomó minutos, sin repetir verificación de dominio ni el bloqueo de Production - el patrón de reuso funciona. `tested_e2e: true`, evidencia en `.loop/evidence/tiktok-display-api-e2e.md`. Los 3 endpoints (`user/info`, `video/list`, `video/query`) respondieron con el schema documentado. Único hallazgo nuevo: `video/query` con un ID inexistente no da error, lo omite en silencio (`code: "ok"`) - ya documentado en el SKILL.md. Cobertura pendiente (no bloqueante): no se pudo probar el caso "video real" porque la cuenta de prueba no tiene contenido público - limitación de datos, no de la Skill.
 
-Próximo paso: Ciclo 3 de entrenamiento (último del modo entrenamiento antes de decidir mecanismo de lanzamiento) sobre Iteración 2 - Display API, reusando la app/tokens ya obtenidos.
+Con Iteración 2, el modo entrenamiento (Paso 7) ya corrió 3 ciclos completos: Ciclo 1 (documentación + Grader VERDE), Ciclo 2 (primer E2E real, con sorpresas resueltas y guardarraíl recalibrado), Ciclo 3 (segundo E2E real, sin sorpresas nuevas más allá de un detalle de comportamiento de API). Esto cumple el criterio de la skill `setup-loop-engineering` de "2-3 iteraciones sin sorpresas" antes de pasar al Paso 8 (elegir mecanismo de lanzamiento).
+
+Próximo paso: Grader del Ciclo 3, y después decidir con el usuario el mecanismo de lanzamiento para Iteración 3+ (Content Posting API en adelante).
 
 ## Bloqueadas
 Ninguna.
