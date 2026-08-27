@@ -40,15 +40,16 @@ Confirmados por fetch directo a developers.tiktok.com (no inferidos):
 - [x] Iteración 1 - Módulo 1 (Login Kit / OAuth / App Setup / Scopes): `skills/tiktok-auth-setup/SKILL.md` completo, `verify.sh` verde, Grader (Ciclo 1) verificó en frío: VERDE, `tested_e2e: true` con evidencia real en `.loop/evidence/tiktok-auth-setup-e2e.md` (app Sandbox real, autorización + intercambio + refresh de token ejecutados contra la API real de TikTok, 2026-08-27)
 - [x] Iteración 2 - Display API (perfil, lista y consulta de videos): `skills/tiktok-display-api/SKILL.md` completo, `verify.sh` verde, `tested_e2e: true` con evidencia real en `.loop/evidence/tiktok-display-api-e2e.md` (mismo app Sandbox + scope `video.list` agregado, los 3 endpoints probados contra la API real, 2026-08-27). Cobertura pendiente: caso "video real encontrado" en video/list y video/query (la cuenta de prueba no tiene contenido público) - documentado, no simulado.
 - [x] Iteración 3 - Content Posting API (Direct Post, Upload/borradores): `skills/tiktok-content-posting-api/SKILL.md` completo, `verify.sh` verde, `tested_e2e: true` con evidencia real en `.loop/evidence/tiktok-content-posting-api-e2e.md` (Upload API con éxito end-to-end completo hasta `SEND_TO_USER_INBOX`; Direct Post con `SELF_ONLY` reveló una restricción real de TikTok más estricta que la documentada - `unaudited_client_can_only_post_to_private_accounts` incluso en privado -, documentada como hallazgo, 2026-08-28). Guardarraíl de irreversibilidad reforzado en `verify.sh` (regex ahora cubre sintaxis JSON además de shell) tras hallazgo del Grader.
+- [x] Iteración 4 - Webhooks: existencia confirmada bajo developers.tiktok.com, `skills/tiktok-webhooks/SKILL.md` completo, `verify.sh` verde, `tested_e2e: true` con evidencia real en `.loop/evidence/tiktok-webhooks-e2e.md` (servidor Flask + túnel ngrok temporal, evento real `authorization.removed` recibido con firma HMAC-SHA256 verificada correctamente, infraestructura de prueba dada de baja al terminar, 2026-08-28). Hallazgo: el botón "Test event" del portal falla con 403 de permisos (no llega a nuestro servidor) - un evento real sí se entrega sin problema.
 
 ## In progress
-- Iteración 4 - Webhooks: existencia confirmada, `skills/tiktok-webhooks/SKILL.md` completo (eventos, verificación de firma HMAC-SHA256, ejemplo de servidor receptor), `verify.sh` verde. `tested_e2e: false` - ver Blocked, prerrequisito de infraestructura (no solo un click en el portal, esta vez).
+- Ninguna
 
 ## Next
-- Ninguna todavía (Módulo 4 sigue in progress hasta resolver el bloqueo de abajo)
+- [ ] Módulos adicionales (Research API, Data Portability API, Share Kit, Commercial Content API, Legacy API v2, Embed Videos) - ver tabla de Módulos descubiertos arriba para fuentes confirmadas.
 
 ## Blocked
-- **Prueba E2E de `tiktok-webhooks`**: a diferencia de los módulos anteriores, este necesita un servidor HTTPS público corriendo (para que TikTok le mande eventos reales), no solo un click de configuración. Requiere decidir con el usuario cómo desplegarlo (túnel temporal tipo ngrok vs. algo persistente) antes de poder generar y verificar un evento real.
+- Ninguna
 
 ## Notes
 - Los módulos 11 y 12 (Business API, TikTok Shop) están marcados "sin confirmar" a propósito: la inspección inicial de `/docs/en/welcome` y `/doc/overview` no los mostró como parte de developers.tiktok.com. Antes de tratarlos como iteraciones de este mismo repo, hay que confirmar si viven bajo el mismo dominio/OAuth o si son portales de partner completamente distintos con su propio flujo de auth. Esto se reforzó al confirmar Webhooks: la búsqueda mostró que tanto TikTok Business API (business-api.tiktok.com) como TikTok Shop (partner.tiktokshop.com) tienen sus propios webhooks en portales separados - consistente con la sospecha original de que son productos con auth/portal propio, no parte de este mismo flujo.

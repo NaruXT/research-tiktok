@@ -42,12 +42,12 @@ Usuario eligió `/loop` en ritmo dinámico para Iteración 3 en adelante. **Iter
 
 Con Iteración 3, quedan 3/3 módulos planeados originalmente por el usuario (Auth, Display, Content Posting) completos y probados E2E contra la API real.
 
-**Iteración 4 (Webhooks) - documentación completa.** Se confirmó que el módulo SÍ existe bajo developers.tiktok.com (páginas propias `webhooks-overview`/`webhooks-events`/`webhooks-verification`, no visibles en la navegación inicial pero reales). Documentados: los 4 tipos de evento con payload real, verificación de firma HMAC-SHA256 (`Tiktok-Signature` header), garantías de entrega (72h de reintentos, at-least-once). `verify.sh` verde.
+**Iteración 4 (Webhooks) completa.** Se confirmó que el módulo SÍ existe bajo developers.tiktok.com (páginas propias `webhooks-overview`/`webhooks-events`/`webhooks-verification`, no visibles en la navegación inicial pero reales). Grader dio VERDE con un hallazgo menor (header documentado como `Tiktok-Signature` en vez de `TikTok-Signature` - corregido). Usuario eligió desplegar un túnel `ngrok` temporal para la prueba E2E: el botón "Test event" del portal falló con 403 de permisos (confirmado con logs de ngrok que nunca llegó al servidor), pero un evento **real** (`authorization.removed`, generado revocando el acceso de la app desde la cuenta de TikTok del usuario) sí se entregó y verificó correctamente (firma HMAC-SHA256 válida). Infraestructura de prueba (Flask + ngrok) dada de baja al terminar. `tested_e2e: true`.
 
-**Nuevo tipo de checkpoint, distinto a los anteriores**: este módulo no se prueba con un click en el portal - necesita un servidor HTTPS público corriendo para que TikTok le mande eventos reales. `tested_e2e: false`, pausado esperando decisión del usuario sobre infraestructura antes de intentar la prueba E2E.
+Con esto, **4/4 módulos confirmados hasta ahora están Done con evidencia E2E real** (Auth, Display, Content Posting, Webhooks). Quedan los módulos adicionales de `PROGRESS.md` (Research API, Data Portability, Share Kit, Commercial Content API, Legacy API v2, Embed Videos) y los dos sin confirmar (Business API, TikTok Shop - probablemente portales separados, ver Notes).
 
 ## Bloqueadas
-- `tested_e2e` de `tiktok-webhooks`: requiere infraestructura (servidor HTTPS público), no un click de portal - decisión pendiente con el usuario sobre cómo desplegarlo. Ver PROGRESS.md § Blocked.
+Ninguna.
 
 ## Protocolo Maker/Grader
 1. Maker: implementa el próximo ítem de `PROGRESS.md` → Next, corre `.loop/verify.sh`.

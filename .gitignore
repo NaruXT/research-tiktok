@@ -8,3 +8,4 @@ node_modules/
 .loop/evidence/*.mp4
 .loop/evidence/upload-publish-id.txt
 .loop/evidence/*-put-response.raw.txt
+.loop/evidence/webhook-received.raw.jsonl

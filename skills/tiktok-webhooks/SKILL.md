@@ -6,7 +6,7 @@ tiktok_docs:
   - https://developers.tiktok.com/docs/en/webhooks-events
   - https://developers.tiktok.com/docs/en/webhooks-verification
 scopes: []
-tested_e2e: false
+tested_e2e: true
 last_verified: 2026-08-28
 ---
 
@@ -89,6 +89,7 @@ Formato común a todos los eventos: `client_key`, `event`, `create_time` (unix t
 - Responder 200 rápido, siempre - si el procesamiento del evento falla después de responder 200, hay que loguearlo y reintentar por cuenta propia (TikTok no lo reintentará, ya recibió el 200).
 - Si el servidor no responde a tiempo o responde con error, TikTok reintenta con backoff exponencial hasta por **72 horas**, después descarta el evento. Entrega "al menos una vez" - el mismo evento puede llegar duplicado, el procesamiento debe ser idempotente (ej. dedupe por `event`+`create_time`+contenido, o por un ID si el evento lo trae).
 - No hay tabla de códigos de error documentada para este módulo (no es un endpoint que TikTok exponga para llamar, es al revés) - los "errores" relevantes son de la entrega (timeout/reintento) y de la verificación de firma (rechazar si no coincide, no del lado de TikTok).
+- **Confirmado en prueba E2E real**: el botón "Test event" del Developer Portal (para simular un evento sin generarlo de verdad) devuelve `403 Forbidden` ("You don't have access to perform this operation on an app") incluso con el callback URL guardado correctamente. Confirmado con logs de ngrok que la request nunca llega al callback - el error es del lado de TikTok, antes de la entrega. Mecanismo exacto no confirmado (posible restricción de app sin auditar, o de rol de organización). Un evento **real** (no simulado) sí se entrega sin problema - ver Prueba E2E realizada.
 
 ## Ejemplo end-to-end
 
@@ -132,8 +133,11 @@ def tiktok_webhook():
 
 ## Prueba E2E realizada
 
-**`tested_e2e: false` - prerrequisito estructuralmente distinto a los módulos anteriores, no un fallo silencioso.**
+**`tested_e2e: true` - 2026-08-28.**
 
-A diferencia de Auth/Display/Content Posting (donde el prerrequisito era humano pero puntual - un click en el portal), este módulo requiere **infraestructura corriendo de forma continua**: un servidor HTTPS público, alcanzable desde internet, registrado como callback URL en el Developer Portal, para que TikTok le mande eventos reales cuando ocurren (ej. cuando el usuario desautoriza la app, o cuando termina de publicar un borrador de la Iteración 3). Esto es una categoría de prerrequisito nueva - no se resuelve con un click, necesita infraestructura desplegada (ej. un servidor real con dominio, o un túnel tipo ngrok apuntando a un proceso local corriendo durante la prueba).
+Infraestructura: servidor Flask local (el mismo código de "Ejemplo end-to-end") expuesto vía túnel HTTPS de `ngrok`, registrado como callback URL en el Developer Portal. Dado de baja al terminar la prueba - no queda nada corriendo persistente.
 
-Para completar esta sección hace falta decidir con el usuario cómo desplegar ese servidor (¿local con túnel temporal para una prueba puntual, o algo persistente?) antes de intentar generar un evento real (ej. desautorizando la app de prueba desde la cuenta de TikTok, lo cual dispararía `authorization.removed` - pero eso también invalidaría los tokens usados en las Skills anteriores, hay que coordinar el orden).
+1. El botón "Test event" del portal falló con `403 Forbidden` sin que la request llegara siquiera a nuestro servidor (confirmado con logs de ngrok) - hallazgo real, documentado en "Manejo de errores".
+2. Se generó un evento **real**: revocar el acceso de la app desde la cuenta de TikTok del usuario (Ajustes > Seguridad > Apps conectadas) disparó `authorization.removed`, entregado al callback en segundos, con firma válida verificada correctamente por la implementación del ejemplo de código (`signature_valid: true`).
+
+Evidencia completa (evento real con PII `<REDACTED>`) en `.loop/evidence/tiktok-webhooks-e2e.md`. Cobertura pendiente (no bloqueante): los otros 3 tipos de evento (`video.upload.failed`, `video.publish.completed`, `portability.download.ready`) no se probaron en vivo - requerirían disparar esos flujos específicos con el callback activo, no se hizo en este ciclo. El mecanismo de verificación de firma y el formato del evento SÍ quedaron confirmados contra un evento real, que es lo más riesgoso de que estuviera mal documentado.
