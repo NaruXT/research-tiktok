@@ -41,13 +41,13 @@ Confirmados por fetch directo a developers.tiktok.com (no inferidos):
 - [x] Iteración 2 - Display API (perfil, lista y consulta de videos): `skills/tiktok-display-api/SKILL.md` completo, `verify.sh` verde, `tested_e2e: true` con evidencia real en `.loop/evidence/tiktok-display-api-e2e.md` (mismo app Sandbox + scope `video.list` agregado, los 3 endpoints probados contra la API real, 2026-08-27). Cobertura pendiente: caso "video real encontrado" en video/list y video/query (la cuenta de prueba no tiene contenido público) - documentado, no simulado.
 
 ## In progress
-- Ninguna
+- Iteración 3 - Content Posting API (Direct Post, Upload/borradores): `skills/tiktok-content-posting-api/SKILL.md` completo (endpoints, scopes, schemas, manejo de errores, ejemplo end-to-end con `privacy_level` hardcodeado a `SELF_ONLY`), `verify.sh` verde. `tested_e2e: false` - ver Blocked, dos prerrequisitos externos.
 
 ## Next
-- [ ] Iteración 3 - Content Posting API (Direct Post, Upload/borradores) - fuente confirmada `/products/content-posting-api`. **Atención guardarraíl**: cualquier prueba E2E de este módulo debe usar `privacy_level=SELF_ONLY` (o equivalente privado/borrador), nunca público - ver `.loop/HANDOFF.md` § Guardarraíles de irreversibilidad.
+- Ninguna todavía (Módulo 3 sigue in progress hasta resolver el bloqueo de abajo)
 
 ## Blocked
-- Ninguna
+- **Prueba E2E de `tiktok-content-posting-api`**: (1) faltan agregar los scopes `video.publish`/`video.upload` a la app de Sandbox y re-autorizar, (2) falta un archivo de video real (`.mp4`) de prueba. Ninguno es un ROJO por intentos - son prerrequisitos externos, documentados en la sección "Prueba E2E realizada" del SKILL.md.
 
 ## Notes
 - Los módulos 11 y 12 (Business API, TikTok Shop) están marcados "sin confirmar" a propósito: la inspección inicial de `/docs/en/welcome` y `/doc/overview` no los mostró como parte de developers.tiktok.com. Antes de tratarlos como iteraciones de este mismo repo, hay que confirmar si viven bajo el mismo dominio/OAuth o si son portales de partner completamente distintos con su propio flujo de auth.

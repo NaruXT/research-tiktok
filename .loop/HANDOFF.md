@@ -1,10 +1,7 @@
 # HANDOFF - Estado del loop
 
-## Objetivo (Iteración 1 - Auth/App Setup/OAuth/Scopes)
-Iteración 1 está hecha cuando existe `skills/tiktok-auth-setup/SKILL.md` que:
-(a) pasa `.loop/verify.sh` en verde,
-(b) tiene `tested_e2e: true` en su frontmatter respaldado por evidencia real en `.loop/evidence/` (app de desarrollador registrada en developers.tiktok.com, flujo OAuth 2.0 ejecutado con éxito, `access_token` obtenido y refrescado al menos una vez contra la API real, todo con secrets `<REDACTED>` en la evidencia guardada), y
-(c) `PROGRESS.md` (raíz) marca el módulo Auth/OAuth como Done.
+## Objetivo (vigente - Iteración 3 en curso, corriendo bajo /loop dinámico)
+Iteración 1 (Auth/OAuth) e Iteración 2 (Display API) ya están Done - ver PROGRESS.md. El objetivo vigente es Iteración 3 (Content Posting API): un módulo está hecho cuando existe su `skills/tiktok-<modulo>/SKILL.md` que (a) pasa `.loop/verify.sh` en verde, (b) tiene `tested_e2e: true` respaldado por evidencia real en `.loop/evidence/`, con secrets/PII siempre `<REDACTED>`, y (c) `PROGRESS.md` lo marca Done. Mismo criterio para cada módulo siguiente (Webhooks en adelante).
 
 ## Guardarraíles numéricos
 - Máximo por iteración (trabajo de documentación/código de la Skill en sí - `skills/**`, `SKILL.md`, evidencia): 4 archivos / 700 líneas
@@ -41,10 +38,10 @@ Con Iteración 2, el modo entrenamiento (Paso 7) ya corrió 3 ciclos completos: 
 
 Grader del Ciclo 3: VERDE (subagente separado, confirmó cero secrets y cero PII en texto plano en todo el historial de git, incluyendo el `display_name` real del usuario). **Modo entrenamiento (Paso 7) completo, 3/3 ciclos verificados.**
 
-Próximo paso: decidir con el usuario el mecanismo de lanzamiento (Paso 8) para Iteración 3 en adelante (Content Posting API, Webhooks, y los módulos adicionales por confirmar).
+Usuario eligió `/loop` en ritmo dinámico para Iteración 3 en adelante. **Iteración 3 (Content Posting API) - primer ciclo del /loop:** Maker documentó `skills/tiktok-content-posting-api/SKILL.md` completo (endpoints de Direct Post, Upload/borradores, status, creator_info; `privacy_level` hardcodeado a `SELF_ONLY` en el ejemplo end-to-end, reforzado por el grep de `verify.sh`). `verify.sh` verde. `tested_e2e: false` - dos prerrequisitos externos genuinos: (1) agregar scopes `video.publish`/`video.upload` a la app y re-autorizar, (2) conseguir un archivo de video real para subir. Ninguno resoluble por el loop solo - siguiendo la instrucción explícita del prompt de lanzamiento ("si se topa con un checkpoint humano, pausar y preguntar"), el loop se detiene acá a esperar al usuario en vez de intentar resolverlo o simularlo.
 
 ## Bloqueadas
-Ninguna.
+- `tested_e2e` de `tiktok-content-posting-api`: prerrequisitos externos reales (scopes nuevos a agregar + video de prueba), no un ROJO por intentos - ver PROGRESS.md § Blocked.
 
 ## Protocolo Maker/Grader
 1. Maker: implementa el próximo ítem de `PROGRESS.md` → Next, corre `.loop/verify.sh`.
