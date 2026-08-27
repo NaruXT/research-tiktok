@@ -46,10 +46,15 @@ Con Iteración 3, quedan 3/3 módulos planeados originalmente por el usuario (Au
 
 Con esto, **4/4 módulos confirmados hasta ahora están Done con evidencia E2E real** (Auth, Display, Content Posting, Webhooks). Usuario pidió seguir con los módulos adicionales.
 
-**Research API y Data Portability API - documentación completa, mismo tipo de bloqueo nuevo.** Ambos requieren que TikTok apruebe al usuario (investigador vetted para Research API; review de compliance GDPR para Data Portability) - procesos externos de aplicación, no resolubles en la sesión ni con un click de portal. Documentados completos (endpoints, scopes, schemas, manejo de errores reales) con `tested_e2e: false` permanente hasta que exista esa aprobación - no se inició ningún proceso de aplicación en nombre del usuario, es su decisión.
+**Research API y Data Portability API - documentación completa, mismo tipo de bloqueo nuevo.** Ambos requieren que TikTok apruebe una aplicación separada (proyecto de investigación para Research API; review de protección de datos para Data Portability) - procesos externos, no resolubles en la sesión ni con un click de portal. Documentados completos con `tested_e2e: false` permanente. **Grader encontró un ROJO real en Research API** (scopes `[]` cuando la doc real exige `research.data.basic`, endpoint de comentarios sin fuente citable, callout sobre-específico sobre "investigador vetted"/afiliación académica no respaldado por la fuente) - corregido en el mismo ciclo (commit `ddf6d86`). Data Portability dio VERDE, con una recomendación de gobernanza (el DoD de PROGRESS.md se contradecía a sí mismo al marcar módulos "Done" sin E2E) - corregida agregando la excepción explícita al checklist (commit `36e0ae8`).
+
+**Share Kit - documentación completa, categoría de bloqueo nueva otra vez.** No es una API HTTP, es un SDK nativo iOS/Android - no hay forma de probarlo E2E desde esta sesión (requeriría construir una app móvil real). `tested_e2e: false` permanente, documentado explícitamente como fuera de alcance por naturaleza (no por falta de aprobación ni de infraestructura desplegable).
+
+Quedan: Commercial Content API, Legacy API v2, Embed Videos.
 
 ## Bloqueadas
-- `tested_e2e` de `tiktok-research-api` y `tiktok-data-portability-api`: requieren aprobación externa de TikTok, fuera del control de esta sesión. Ver PROGRESS.md § Blocked.
+- `tested_e2e` de `tiktok-research-api` y `tiktok-data-portability-api`: requieren aprobación externa de TikTok, fuera del control de esta sesión.
+- `tested_e2e` de `tiktok-share-kit`: requiere una app móvil nativa real, fuera del alcance de este proyecto. Ver PROGRESS.md § Blocked para las tres.
 
 ## Protocolo Maker/Grader
 1. Maker: implementa el próximo ítem de `PROGRESS.md` → Next, corre `.loop/verify.sh`.
