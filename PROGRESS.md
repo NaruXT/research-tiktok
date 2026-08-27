@@ -25,7 +25,7 @@ Confirmados por fetch directo a developers.tiktok.com (no inferidos):
 | 1 | Login Kit / OAuth 2.0 / App Setup / Tokens / Scopes | Next | `/docs/en/login-kit-overview`, `/docs/en/login-kit-web`, `/docs/en/login-kit-manage-user-access-tokens`, `/docs/en/scopes-overview`, `/docs/en/getting-started-create-an-app` |
 | 2 | Display API (perfil, lista/consulta de videos) | Pending | `/docs/en/display-api-get-started` |
 | 3 | Content Posting API (Direct Post + Upload/borradores) | Pending | `/products/content-posting-api`, mencionado en overview |
-| 4 | Webhooks / eventos en tiempo real | Pending - **no confirmado todavía** | No se encontró página bajo developers.tiktok.com en la inspección inicial. Confirmar en Iteración 4 si existe como módulo separado o vive dentro de otro producto. |
+| 4 | Webhooks / eventos en tiempo real | In progress - **confirmado que existe** (2026-08-28) | `/docs/en/webhooks-overview`, `/docs/en/webhooks-events`, `/docs/en/webhooks-verification` - no aparecía en la inspección inicial (nav de `/docs/en/welcome`) pero sí existe como páginas propias, encontradas por búsqueda directa |
 | 5 | Research API | Pending | `/products/research-api` (mencionado en overview, no inspeccionado en detalle) |
 | 6 | Data Portability API | Pending | `/docs/en/data-portability-api-get-started`, `/products/data-portability-api` |
 | 7 | Share Kit | Pending | `/products/share-kit` |
@@ -42,14 +42,13 @@ Confirmados por fetch directo a developers.tiktok.com (no inferidos):
 - [x] Iteración 3 - Content Posting API (Direct Post, Upload/borradores): `skills/tiktok-content-posting-api/SKILL.md` completo, `verify.sh` verde, `tested_e2e: true` con evidencia real en `.loop/evidence/tiktok-content-posting-api-e2e.md` (Upload API con éxito end-to-end completo hasta `SEND_TO_USER_INBOX`; Direct Post con `SELF_ONLY` reveló una restricción real de TikTok más estricta que la documentada - `unaudited_client_can_only_post_to_private_accounts` incluso en privado -, documentada como hallazgo, 2026-08-28). Guardarraíl de irreversibilidad reforzado en `verify.sh` (regex ahora cubre sintaxis JSON además de shell) tras hallazgo del Grader.
 
 ## In progress
-- Ninguna
+- Iteración 4 - Webhooks: existencia confirmada, `skills/tiktok-webhooks/SKILL.md` completo (eventos, verificación de firma HMAC-SHA256, ejemplo de servidor receptor), `verify.sh` verde. `tested_e2e: false` - ver Blocked, prerrequisito de infraestructura (no solo un click en el portal, esta vez).
 
 ## Next
-- [ ] Iteración 4 - Webhooks / eventos en tiempo real: **existencia sin confirmar** bajo developers.tiktok.com (ver Notes). Primer paso: confirmar si el módulo existe antes de documentarlo.
+- Ninguna todavía (Módulo 4 sigue in progress hasta resolver el bloqueo de abajo)
 
 ## Blocked
-- Ninguna
+- **Prueba E2E de `tiktok-webhooks`**: a diferencia de los módulos anteriores, este necesita un servidor HTTPS público corriendo (para que TikTok le mande eventos reales), no solo un click de configuración. Requiere decidir con el usuario cómo desplegarlo (túnel temporal tipo ngrok vs. algo persistente) antes de poder generar y verificar un evento real.
 
 ## Notes
-- Los módulos 11 y 12 (Business API, TikTok Shop) están marcados "sin confirmar" a propósito: la inspección inicial de `/docs/en/welcome` y `/doc/overview` no los mostró como parte de developers.tiktok.com. Antes de tratarlos como iteraciones de este mismo repo, hay que confirmar si viven bajo el mismo dominio/OAuth o si son portales de partner completamente distintos con su propio flujo de auth.
-- El módulo 4 (Webhooks), pedido explícitamente por el usuario como Iteración 4, tampoco se encontró en la inspección inicial - queda como pendiente de confirmar cuando le toque el turno, no se inventa su existencia.
+- Los módulos 11 y 12 (Business API, TikTok Shop) están marcados "sin confirmar" a propósito: la inspección inicial de `/docs/en/welcome` y `/doc/overview` no los mostró como parte de developers.tiktok.com. Antes de tratarlos como iteraciones de este mismo repo, hay que confirmar si viven bajo el mismo dominio/OAuth o si son portales de partner completamente distintos con su propio flujo de auth. Esto se reforzó al confirmar Webhooks: la búsqueda mostró que tanto TikTok Business API (business-api.tiktok.com) como TikTok Shop (partner.tiktokshop.com) tienen sus propios webhooks en portales separados - consistente con la sospecha original de que son productos con auth/portal propio, no parte de este mismo flujo.

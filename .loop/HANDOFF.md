@@ -40,10 +40,14 @@ Grader del Ciclo 3: VERDE (subagente separado, confirmó cero secrets y cero PII
 
 Usuario eligió `/loop` en ritmo dinámico para Iteración 3 en adelante. **Iteración 3 (Content Posting API) completa.** Primer ciclo: Maker documentó la Skill, Grader dio VERDE pero encontró un punto ciego real en `verify.sh` (el regex del guardarraíl de irreversibilidad solo cubría sintaxis shell `privacy_level=PUBLIC`, no JSON `"privacy_level": "PUBLIC_TO_EVERYONE"`) - corregido y probado contra ambos casos en el mismo ciclo, más el ejemplo del SKILL.md endurecido para tener `SELF_ONLY` literal en el JSON en vez de por variable. Loop se pausó en el checkpoint humano (agregar producto Content Posting API + scopes `video.publish`/`video.upload` + conseguir un video de prueba) tal como pedía el prompt de lanzamiento. Usuario resolvió el checkpoint (agregó el producto, ambos scopes, y se generó un video sintético con `ffmpeg`); se completó la prueba E2E real: Upload API (borrador) exitoso end-to-end, Direct Post con `SELF_ONLY` reveló una restricción real de TikTok más estricta que la documentada (`unaudited_client_can_only_post_to_private_accounts` incluso en privado, ver SKILL.md § Manejo de errores) - documentado como hallazgo, no forzado a "éxito" cambiando configuración real de la cuenta del usuario.
 
-Con Iteración 3, quedan 3/3 módulos planeados originalmente por el usuario (Auth, Display, Content Posting) completos y probados E2E contra la API real. Próximo: Iteración 4 - Webhooks, cuya existencia bajo developers.tiktok.com todavía no está confirmada (ver PROGRESS.md § Notes) - el próximo ciclo debe empezar confirmando eso antes de documentar nada, no asumir que el módulo existe.
+Con Iteración 3, quedan 3/3 módulos planeados originalmente por el usuario (Auth, Display, Content Posting) completos y probados E2E contra la API real.
+
+**Iteración 4 (Webhooks) - documentación completa.** Se confirmó que el módulo SÍ existe bajo developers.tiktok.com (páginas propias `webhooks-overview`/`webhooks-events`/`webhooks-verification`, no visibles en la navegación inicial pero reales). Documentados: los 4 tipos de evento con payload real, verificación de firma HMAC-SHA256 (`Tiktok-Signature` header), garantías de entrega (72h de reintentos, at-least-once). `verify.sh` verde.
+
+**Nuevo tipo de checkpoint, distinto a los anteriores**: este módulo no se prueba con un click en el portal - necesita un servidor HTTPS público corriendo para que TikTok le mande eventos reales. `tested_e2e: false`, pausado esperando decisión del usuario sobre infraestructura antes de intentar la prueba E2E.
 
 ## Bloqueadas
-Ninguna.
+- `tested_e2e` de `tiktok-webhooks`: requiere infraestructura (servidor HTTPS público), no un click de portal - decisión pendiente con el usuario sobre cómo desplegarlo. Ver PROGRESS.md § Blocked.
 
 ## Protocolo Maker/Grader
 1. Maker: implementa el próximo ítem de `PROGRESS.md` → Next, corre `.loop/verify.sh`.
