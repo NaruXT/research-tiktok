@@ -1,0 +1,29 @@
+# Friction log - tiktok-cli build
+
+Notes as I go: blocks rejected, conventions that turned out wrong for this domain, references that were thin. Folds into `cases/2026-08-27-tiktok-cli.md` at the end.
+
+## Phase 1 - distribution target
+
+- Audience is the user only, running from source on this one machine. No npm publish, no binary. That makes "runtime shebang, no build" the only sane choice per the skill's own table.
+- Rejected pulling the cligentic TS block registry wholesale. The blocks are plain TypeScript with real type annotations (not just JS-with-comments), so using them as-is requires a TS toolchain (tsc/tsx/ts-node) or Node's experimental type-stripping. For a single-user, source-only CLI, adding a build step or an experimental runtime flag is exactly the kind of machinery the user's own CLAUDE.md tells me to avoid for one-off/infrequent operational work unless a concrete blocker justifies it. There is no such blocker here - Node's built-ins (`fs`, `readline`, `util.parseArgs`, `crypto`) cover everything the blocks would give me.
+- Decision: plain Node ESM (`.js`), zero npm dependencies. I reimplemented the *patterns* cligentic documents (trust-ladder, json-mode/detect, atomic-write, audit-log, error-map, global-flags, config) by hand in JS, not by fetching the TS files. This is the skill's own escape hatch ("if you are not in a TypeScript project, read the block source and reimplement the pattern").
+
+## Phase 1b - credential storage
+
+- The skill's boundary says "store identifiers, take secrets from the environment" (keychain/env, not persisted config). This repo already has an established, audited convention for TikTok credentials: a single gitignored `.env` at repo root, redaction-disciplined, verified clean across full git history (see `.loop/HANDOFF.md`). Overriding that with a keychain-based scheme for a single local personal tool would fragment where credentials live for no real security gain (same machine, same user, same trust boundary) and would contradict the project's own established pattern.
+- Decision: CLI reads/writes the same `.env` at repo root (atomic write on token refresh, per `tiktok-auth-setup`'s own note that a refreshed `refresh_token` must always be persisted). Recorded here so this reads as a deliberate call, not an oversight of the skill's boundary.
+
+## Phase 2 - command surface
+
+- `post upload` (Upload API / draft to inbox) and `post direct` (Direct Post) are different trust tiers even though they hit sibling endpoints: upload never becomes visible to anyone but the account owner until they manually finish it inside the TikTok app; direct is a real write to the account's post history, visible at least to the owner and gated by the project's `SELF_ONLY`-only guardrail rather than by TikTok's own audience controls. Modeled as T1 vs T2 accordingly.
+
+## Round 2 - user-requested: credentials never get re-asked, tokens self-heal
+
+- User's actual complaint wasn't "the CLI should prompt for credentials" literally - it was "the session (access_token) expires in 24h, that needs to be handled at use time." Those are different problems. Asked a clarifying question instead of building the literal request: an OAuth access_token can't be usefully "typed in" to renew - it can only come from a browser round-trip (`auth login`) or a silent refresh_token exchange (no interaction needed, valid 365 days). Confirmed with the user: auto-refresh for tokens, interactive-inline prompt only for the three app-registration credentials (client_key/secret/redirect_uri) that a human genuinely can type in from the Developer Portal screen.
+- Found a real ordering bug while wiring this in: `mutate()` ran the trust-ladder gate *before* checking `--dry-run`, so a T2 dry-run (e.g. `post direct --dry-run`) still demanded `--yes` even though nothing was going to be sent. Fixed by moving the dry-run short-circuit before `approveGate()` - dry-run is inherently safe and should bypass the gate it exists to let you skip, not require it. Caught by a test, not by manual poking.
+- Live-fire smoke test (`tiktok profile get`, `tiktok auth refresh`) against the real API surfaced that the stored `refresh_token` for this repo's Sandbox app is *also* dead (`invalid_grant`), despite TikTok's docs saying 365 days. Not a CLI bug - the auto-refresh path did exactly what it should (tried, got a real `invalid_grant` from TikTok, surfaced `AUTH_EXPIRED` pointing at `auth login`). Recorded here because it's the same doc-vs-practice gap pattern this repo's own Skills already caught elsewhere (see `skills/tiktok-content-posting-api/SKILL.md`'s `unaudited_client_can_only_post_to_private_accounts` finding) - Sandbox token lifetimes apparently don't match the documented production lifetimes.
+- Control characters (Ctrl-C/Ctrl-D/Backspace) for the no-echo secret prompt could not be typed literally into the Write tool - they got silently dropped/corrupted. Used `String.fromCharCode(3/4/127)` instead of literal bytes in `src/lib/prompt-secret.js`. Worth remembering for any future terminal-raw-mode code: never rely on literal control bytes surviving a tool-mediated file write.
+
+## Phase 4 - async / --wait
+
+- Did not build a separate job ledger for `--wait`. TikTok's `status/fetch` is itself the idempotent source of truth for a `publish_id` - a local ledger would only duplicate state TikTok already owns, and could go stale relative to it. Instead: `post upload`/`post direct` write the `publish_id` to the audit log at submission time (before the network call returns success is recorded, so a killed process still leaves the id on disk), and `post status --publish-id <id> --wait` is a plain resumable poll against the real endpoint. Recorded as a deliberate deviation from the skill's "job ledger that survives a killed poll" guidance, not a missed requirement - the survival property is satisfied by the audit log instead.

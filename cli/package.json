@@ -1,0 +1,16 @@
+{
+  "name": "tiktok-cli",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Agent-first CLI over this repo's TikTok Skills: auth, profile/video display, and content posting.",
+  "type": "module",
+  "bin": {
+    "tiktok": "./bin/tiktok.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test"
+  }
+}
