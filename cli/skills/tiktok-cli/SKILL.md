@@ -1,11 +1,19 @@
 ---
 name: tiktok-cli
-description: Drive the tiktok CLI (auth, profile/video display, content posting) over this repo's tested TikTok Skills - JSON envelope, trust tiers, and safe workflows for publishing.
+description: Drive the tiktok CLI (auth, profile/video display, content posting) over TikTok's own Login Kit, Display, and Content Posting APIs - JSON envelope, trust tiers, and safe workflows for publishing.
 ---
 
 ## What this is
 
-`tiktok` is a local, source-only CLI wrapping the API sequence this repo's Skills already tested end-to-end: OAuth login -> Display API -> Content Posting API. It talks to the real TikTok API using credentials in this repo's `.env`. Install/run: `cd cli && npm link`, then `tiktok <noun> <verb>`.
+`tiktok` is a CLI wrapping TikTok's official OAuth login -> Display API -> Content Posting API sequence. It talks to the real TikTok API using your own TikTok Developer App's credentials - it does not ship or share anyone else's app.
+
+Install: `npm install -g tiktok-cli` (or run ad hoc with `npx tiktok-cli`). Zero runtime dependencies. Then `tiktok <noun> <verb>`.
+
+## Before you start: bring your own TikTok Developer App
+
+This CLI is not a TikTok app itself - it's a client. You need your own app registered at `developers.tiktok.com` (Sandbox mode is enough to start: Login Kit + Content Posting API products, a redirect URI you control). That gives you a `client_key`, `client_secret`, and the `redirect_uri` you registered.
+
+You don't need to set these up manually: the first time any `auth` command needs one that's missing, the CLI asks for it right there in the terminal (`client_secret` is read without echoing to the screen) and saves it for next time. This only happens in a real interactive terminal - in a script, pipe, or agent context it fails fast with `AUTH_MISSING` instead of hanging on a prompt nobody will answer.
 
 ## Output contract
 
@@ -34,9 +42,9 @@ Run `tiktok schema` for the full live list (`tiktok schema <noun> <verb>` for on
 
 ## The guardrail that never moves
 
-`post direct` always sends `privacy_level: "SELF_ONLY"`. It is a literal constant in `src/commands/post/direct.js`, not a flag, env var, or anything else settable from outside - there is no way to make this CLI post publicly. Before sending anything it also calls `creator info` and refuses if `SELF_ONLY` isn't actually in that account's `privacy_level_options`. This mirrors the project-wide irreversibility guardrail in `../../.loop/HANDOFF.md`.
+`post direct` always sends `privacy_level: "SELF_ONLY"`. It is a literal constant in the CLI's own source, not a flag, env var, or anything else settable from outside - there is no way to make this CLI post publicly. Before sending anything it also calls `creator info` and refuses if `SELF_ONLY` isn't actually in that account's `privacy_level_options`.
 
-Known project finding this CLI surfaces automatically: unaudited Sandbox apps can get `unaudited_client_can_only_post_to_private_accounts` on Direct Post even with `SELF_ONLY`, if the target TikTok account itself is public. `post upload` (draft to inbox) is unaffected and always works regardless of the account's own privacy setting.
+Known TikTok platform behavior this CLI surfaces automatically, not a bug in the CLI: an unaudited Sandbox app can get `unaudited_client_can_only_post_to_private_accounts` on Direct Post even with `SELF_ONLY`, if the target TikTok account itself is set to public. Setting your own account to private resolves it. `post upload` (draft to inbox) is unaffected either way and always works regardless of the account's privacy setting.
 
 ## Safe workflows
 
@@ -64,24 +72,24 @@ tiktok post upload --file ./video.mp4
 
 ```
 tiktok auth login                                # prints an authorize URL + state
-# open it, authorize, copy code/state from the callback page
+# open it, authorize, copy code/state from the callback page your redirect_uri serves
 tiktok auth exchange --code <CODE> --state <STATE>
 ```
 
-You should not need to run `auth refresh` yourself. Every command that calls the API (`profile get`, `video list/get`, `creator info`, `post upload/direct/status`) goes through `withAccessToken`: on `access_token_invalid` it silently refreshes using the stored `refresh_token` (no prompt, no browser - the refresh_token is meant to last 365 days) and retries the original call once. `auth refresh` still exists for running it explicitly. If the refresh_token itself is also dead (`invalid_grant` from TikTok - happens sooner than 365 days on Sandbox apps in practice, see the case in `.loop/HANDOFF.md`), every path converges on the same `AUTH_EXPIRED` error telling you to run `auth login`.
+You should not need to run `auth refresh` yourself. Every command that calls the API (`profile get`, `video list/get`, `creator info`, `post upload/direct/status`) goes through a silent-refresh wrapper: on `access_token_invalid` it refreshes using the stored `refresh_token` (no prompt, no browser - the refresh_token is meant to last 365 days) and retries the original call once. `auth refresh` still exists for running it explicitly. If the refresh_token itself is also dead (TikTok returns `invalid_grant` - can happen sooner than 365 days on Sandbox apps in practice), every path converges on the same `AUTH_EXPIRED` error telling you to run `auth login`.
 
-Tokens persist to this repo's `.env` (atomic write, same file every other Skill/script in this repo already reads). `auth exchange` checks the `--state` you pass against the one `auth login` generated and refuses on mismatch (CSRF check).
+## Where credentials live
 
-**First-time setup**: `TIKTOK_CLIENT_KEY`/`TIKTOK_CLIENT_SECRET`/`TIKTOK_REDIRECT_URI` (the one-time app-registration credentials, not the OAuth tokens) are prompted for automatically, inline, the first time any `auth` command needs one that's missing from `.env` - `client_secret` is read without echoing to the screen. This only happens in a real interactive terminal; in JSON/piped/agent contexts it still fails fast with `AUTH_MISSING` rather than hanging on a prompt nobody will answer. `access_token`/`refresh_token` are deliberately never prompted for - they only come from completing `auth login` in a browser.
+Everything (`client_key`/`client_secret`/`redirect_uri`/tokens) is stored in `${XDG_CONFIG_HOME:-~/.config}/tiktok-cli/.env`, written atomically. Set `TIKTOK_CLI_ENV_PATH` to point at a different file instead (useful if you keep multiple TikTok apps, or already manage secrets elsewhere). `auth exchange` checks the `--state` you pass against the one `auth login` generated and refuses on mismatch (CSRF check). A refreshed `refresh_token` can differ from the one you started with - the CLI always persists the new one, never assumes it's unchanged.
 
 ## Errors worth knowing
 
-- `AUTH_MISSING` - a required `.env` credential isn't set, and either the terminal isn't interactive or the value was left empty at the prompt. Hint names which one.
+- `AUTH_MISSING` - a required credential isn't set, and either the terminal isn't interactive or the value was left empty at the prompt. Hint names which one.
 - `AUTH_EXPIRED` - the access_token was invalid *and* the silent refresh also failed (the refresh_token is dead too). The only fix is `tiktok auth login`. If you only see `access_token_invalid` inside an `API_ERROR`, that's not this - it means the retry-with-a-fresh-token attempt is still in flight or the retry itself failed for a different reason; check the message.
 - `CONFIRMATION_REQUIRED` - a T2 command needs `--yes` in non-interactive contexts.
 - `KILLSWITCH_ACTIVE` - the sentinel file above is present.
 - Unknown `video_ids` passed to `video get` are silently dropped by TikTok's API, not an error - compare `requested` vs. `returned` in the response.
 
-## Tests
+## Working from source
 
-`npm test` (Node's built-in test runner, zero dependencies, 18 tests) covers the JSON envelope shape, the trust ladder's non-interactive throw, the killswitch blocking a write before any network call, the silent-refresh-and-retry path (success, and the dead-refresh_token terminal case), and - most load-bearing - that `post direct --dry-run` always produces `privacy_level: "SELF_ONLY"` and never reaches the real init/publish call.
+If you cloned the source instead of installing from npm: `npm install` (installs ESLint as a dev-only dependency, never shipped in the published package), then `npm test` runs the suite (Node's built-in test runner, zero runtime dependencies, 21 tests) - covers the JSON envelope shape, the trust ladder's non-interactive throw, the killswitch blocking a write before any network call, the silent-refresh-and-retry path (success, and the dead-refresh_token terminal case), and - most load-bearing - that `post direct --dry-run` always produces `privacy_level: "SELF_ONLY"` and never reaches the real init/publish call. `npm link` installs the `tiktok` command from source for local testing.

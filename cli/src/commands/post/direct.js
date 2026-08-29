@@ -64,10 +64,9 @@ export async function postDirect(ctx, { file, caption, disableComment, disableDu
       } catch (err) {
         if (err.tiktokCode === "unaudited_client_can_only_post_to_private_accounts") {
           err.hint =
-            "known project finding, not a bug here: unaudited Sandbox apps are blocked server-side " +
-            "from Direct Post even with SELF_ONLY, unless the target TikTok account itself is set to " +
-            "private. See skills/tiktok-content-posting-api/SKILL.md. `tiktok post upload` (draft) works " +
-            "regardless.";
+            "known TikTok platform behavior, not a bug here: unaudited Sandbox apps are blocked " +
+            "server-side from Direct Post even with SELF_ONLY, unless the target TikTok account " +
+            "itself is set to private. `tiktok post upload` (draft) works regardless.";
         }
         throw err;
       }

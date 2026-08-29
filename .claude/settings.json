@@ -4,7 +4,8 @@
       {
         "matcher": "auto",
         "hooks": [
-          { "type": "command", "command": "cp .loop/HANDOFF.md .loop/handoff-backup.md 2>/dev/null; exit 0" }
+          { "type": "command", "command": "cp .loop/HANDOFF.md .loop/handoff-backup.md 2>/dev/null; exit 0" },
+          { "type": "command", "command": "cp cli/.loop/HANDOFF.md cli/.loop/handoff-backup.md 2>/dev/null; exit 0" }
         ]
       }
     ],
@@ -12,7 +13,8 @@
       {
         "matcher": "compact",
         "hooks": [
-          { "type": "command", "command": "cat .loop/handoff-backup.md 2>/dev/null || true" }
+          { "type": "command", "command": "cat .loop/handoff-backup.md 2>/dev/null || true" },
+          { "type": "command", "command": "cat cli/.loop/handoff-backup.md 2>/dev/null || true" }
         ]
       }
     ]

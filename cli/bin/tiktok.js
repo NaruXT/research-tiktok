@@ -66,13 +66,13 @@ const ROUTES = {
 };
 
 function printHelp() {
-  console.error("tiktok - CLI over this repo's TikTok Skills (Auth, Display, Content Posting)\n");
+  console.error("tiktok - CLI over TikTok's Login Kit, Display, and Content Posting APIs\n");
   console.error("Usage: tiktok <noun> <verb> [flags]\n");
   console.error("Commands:");
   for (const key of Object.keys(ROUTES)) console.error(`  tiktok ${key}`);
   console.error("  tiktok schema [<noun> <verb>]\n");
   console.error("Global flags: --json --yes/-y --dry-run --wait --verbose/-v --help/-h");
-  console.error("\nAgent manual: cli/skills/tiktok-cli/SKILL.md");
+  console.error("\nAgent manual: skills/tiktok-cli/SKILL.md (in the installed package)");
 }
 
 async function main() {

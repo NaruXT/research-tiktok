@@ -1,16 +1,21 @@
 import { readFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
-import { fileURLToPath } from "node:url";
-import { join, dirname } from "node:path";
+import { homedir } from "node:os";
+import { join } from "node:path";
 import { atomicWrite } from "./atomic-write.js";
 import { AppError, Codes } from "./error-map.js";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-// cli/src/lib -> repo root is three levels up.
-const REPO_ROOT = join(__dirname, "..", "..", "..");
+// XDG config dir, same convention as stateDir() in paths.js (config vs state
+// are deliberately separate XDG locations). No repo-relative resolution
+// anymore - this is what makes the credential store portable to an
+// `npm install -g` outside any particular repo. TIKTOK_CLI_ENV_PATH stays
+// the explicit override for development.
+function xdgConfigDir() {
+  return process.env.XDG_CONFIG_HOME || join(homedir(), ".config");
+}
 
 export function envPath() {
-  return process.env.TIKTOK_CLI_ENV_PATH || join(REPO_ROOT, ".env");
+  return process.env.TIKTOK_CLI_ENV_PATH || join(xdgConfigDir(), "tiktok-cli", ".env");
 }
 
 function parseEnvFile(text) {

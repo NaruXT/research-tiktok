@@ -1,0 +1,22 @@
+# Un path/glob por línea. Cualquier match acá es ROJO automático para el
+# Grader, no es juicio - ver cli/.loop/HANDOFF.md protocolo Maker/Grader.
+#
+# Este loop está scopeado a cli/** exclusivamente - ver Paths en HANDOFF.md.
+# Todo lo de afuera de cli/ está prohibido por defecto, listado acá lo que
+# es más probable que alguien toque por error:
+
+../skills/**
+../docs/**
+../PROGRESS.md
+../.loop/**
+../.env
+../.env.local
+../.git/**
+.git/**
+
+# No hay path que represente esto porque la regla es "no debe existir tal
+# código", no un archivo a evitar - ver guardarraíl de irreversibilidad en
+# HANDOFF.md: privacy_level en post/direct.js nunca deja de ser el literal
+# "SELF_ONLY", y ningún flag/env var nuevo puede sobreescribirlo. El Grader
+# debe grepear cualquier diff a post/direct.js buscando esto explícitamente,
+# no confiar solo en que verify.sh lo haya corrido.

@@ -1,16 +1,36 @@
 {
   "name": "tiktok-cli",
   "version": "0.1.0",
-  "private": true,
-  "description": "Agent-first CLI over this repo's TikTok Skills: auth, profile/video display, and content posting.",
+  "description": "Agent-first CLI over TikTok's Login Kit, Display, and Content Posting APIs: auth, profile/video display, and content posting.",
   "type": "module",
+  "license": "MIT",
+  "author": "NaruXT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NaruXT/research-tiktok.git",
+    "directory": "cli"
+  },
+  "keywords": [
+    "tiktok",
+    "cli",
+    "content-posting-api",
+    "agent-first"
+  ],
   "bin": {
     "tiktok": "./bin/tiktok.js"
   },
+  "files": [
+    "bin",
+    "src",
+    "skills"
+  ],
   "engines": {
     "node": ">=20"
   },
   "scripts": {
     "test": "node --test"
+  },
+  "devDependencies": {
+    "eslint": "^10.9.1"
   }
 }

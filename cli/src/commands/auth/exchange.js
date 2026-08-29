@@ -1,4 +1,4 @@
-import { requireEnv, persistEnv } from "../../lib/env.js";
+import { persistEnv } from "../../lib/env.js";
 import { requireAppCredential } from "../../lib/credentials.js";
 import { tiktok } from "../../lib/http.js";
 import { mutate } from "../../lib/mutate.js";
